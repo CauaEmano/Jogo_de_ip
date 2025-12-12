@@ -4,12 +4,15 @@ class Player(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
 
-        global gravidade, vel_x, velocidade, inercia_x
+        global gravidade, vel_x, velocidade, inercia_x, pulo_duplo, pulo_duplo_timer, tecla_cima
 
         gravidade = 2
         vel_x = 0
         velocidade = 10
         inercia_x = 1.5
+        pulo_duplo = False
+        pulo_duplo_timer = 0
+        tecla_cima = False
         self.vel_y = gravidade
         self.no_ar = True
         self.flip = False
@@ -22,11 +25,11 @@ class Player(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(midbottom = (80, 500))
     
     def movimentacao(self):
-        global gravidade, vel_x, velocidade, inercia_x
+        global gravidade, vel_x, velocidade, inercia_x, pulo_duplo, pulo_duplo_timer, tecla_cima
 
-        pulou = False
         mov_esq = False
         mov_dir = False
+        
 
         keys = pygame.key.get_pressed()
 
@@ -46,7 +49,9 @@ class Player(pygame.sprite.Sprite):
         
         # Inércia de movimento 
         # Maior no ar do que no chão
-        if not self.no_ar: inercia_x = 1.5
+        if not self.no_ar: 
+            inercia_x = 1.5
+            pulo_duplo = False
         else: inercia_x = 0.7
 
         if vel_x < 0:
@@ -58,9 +63,24 @@ class Player(pygame.sprite.Sprite):
 
         self.rect.x += vel_x
 
-        # Pulo
-        if keys[pygame.K_UP] and not self.no_ar:
+        # Movimentação vertical
+        # Pulo duplo   
+        if pulo_duplo: pulo_duplo_timer += 1
+        else: pulo_duplo_timer = 0
+        
+        # keys[pygame.K_UP] and not tecla_cima tem comportamento semelhante ao KEYDOWN
+        if keys[pygame.K_UP] and not tecla_cima and self.no_ar and pulo_duplo and pulo_duplo_timer >= 12:
+            pulo_duplo = False
+            self.vel_y = -20
+        
+        # Pulo normal
+        if keys[pygame.K_UP] and not tecla_cima and not self.no_ar:
             self.vel_y = -25
+            pulo_duplo = True
+
+        tecla_cima = keys[pygame.K_UP]
+
+        
 
         # Gravidade atua até atingir a velocidade terminal
         # 25 é a velocidade terminal

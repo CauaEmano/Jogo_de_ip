@@ -31,6 +31,7 @@ class Player(pygame.sprite.Sprite):
         if keys[pygame.K_UP] and not no_ar:
             vel_y = -20
 
+        # gravidade age o tempo todo
         vel_y += gravidade
 
         self.rect.y += vel_y

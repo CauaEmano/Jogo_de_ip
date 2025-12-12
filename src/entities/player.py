@@ -4,41 +4,77 @@ class Player(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
 
-        global gravidade, vel_y
-        gravidade = 2
-        vel_y = gravidade
+        global gravidade, vel_x, velocidade, inercia_x
 
-        self.image = pygame.image.load("imagens/indio.png").convert_alpha()
-        self.image = pygame.transform.rotozoom(self.image, 0, 1.5)
-        self.rect = self.image.get_rect(midbottom = (80, 600))
+        gravidade = 2
+        vel_x = 0
+        velocidade = 10
+        inercia_x = 1.5
+        self.vel_y = gravidade
+        self.no_ar = True
+        self.flip = False
+
+        self.imagem_normal = pygame.image.load("imagens/indio.png").convert_alpha()
+        self.imagem_normal = pygame.transform.rotozoom(self.imagem_normal, 0, 2)
+        self.imagem_invertida = pygame.transform.flip(self.imagem_normal, True, False)
+        
+        self.image = self.imagem_normal
+        self.rect = self.image.get_rect(midbottom = (80, 500))
     
     def movimentacao(self):
-        global gravidade, vel_y
+        global gravidade, vel_x, velocidade, inercia_x
+
         pulou = False
-        no_ar = False
+        mov_esq = False
+        mov_dir = False
 
         keys = pygame.key.get_pressed()
+
         # Movimentação lateral
         if keys[pygame.K_LEFT]:
-            self.rect.x -= 5
+            mov_esq = True
         if keys[pygame.K_RIGHT]:
-            self.rect.x += 5
+            mov_dir = True
+
+        # Impedir direções simultâneas
+        if mov_esq and not mov_dir:
+            vel_x = -velocidade
+            self.flip = True
+        elif not mov_esq and mov_dir:
+            vel_x = velocidade
+            self.flip = False
+        
+        # Inércia de movimento 
+        # Maior no ar do que no chão
+        if not self.no_ar: inercia_x = 1.5
+        else: inercia_x = 0.7
+
+        if vel_x < 0:
+            vel_x += inercia_x
+            if vel_x > 0: vel_x = 0
+        elif vel_x > 0:
+            vel_x -= inercia_x
+            if vel_x < 0: vel_x = 0
+
+        self.rect.x += vel_x
 
         # Pulo
-        if self.rect.bottom >= 595: no_ar = False
-        else: no_ar = True
+        if keys[pygame.K_UP] and not self.no_ar:
+            self.vel_y = -25
 
-        if keys[pygame.K_UP] and not no_ar:
-            vel_y = -20
+        # Gravidade atua até atingir a velocidade terminal
+        # 25 é a velocidade terminal
+        if self.vel_y <= 25:
+            self.vel_y += gravidade
 
-        # gravidade age o tempo todo
-        vel_y += gravidade
+        self.rect.y += self.vel_y
 
-        self.rect.y += vel_y
-
-        # Mantém no chão
-        if self.rect.bottom >= 600:
-            self.rect.bottom = 600
+    def sprites(self):
+        if self.flip:
+            self.image = self.imagem_invertida
+        else:
+            self.image = self.imagem_normal
 
     def update(self):
         self.movimentacao()
+        self.sprites()

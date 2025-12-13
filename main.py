@@ -3,11 +3,8 @@ from sys import exit
 
 from src.entities import *
 from src.world import *
-<<<<<<< HEAD
 from src.Objects import *
-=======
 from src.core import *
->>>>>>> 795a87e8f2296ec22afb1102104143c911ca604e
 
 # Variáveis e funções essenciais
 pygame.init()

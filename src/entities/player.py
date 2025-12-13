@@ -14,7 +14,7 @@ class Player(pygame.sprite.Sprite):
         self.no_ar = True
         self.flip = False
 
-        self.imagem_normal = pygame.image.load("imagens/indio.png").convert_alpha()
+        self.imagem_normal = pygame.image.load("assets/images/indio.png").convert_alpha()
         self.imagem_normal = pygame.transform.rotozoom(self.imagem_normal, 0, 2)
         self.imagem_invertida = pygame.transform.flip(self.imagem_normal, True, False)
         

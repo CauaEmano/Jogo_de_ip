@@ -100,14 +100,14 @@ class Player(pygame.sprite.Sprite):
             frame_atual = self.frames_andar[5]
             
         elif self.vel_x != 0:
-            # correndo
+            # Correndo
             self.frame_index += self.animation_speed
             if self.frame_index >= len(self.frames_andar):
                 self.frame_index = 0
             frame_atual = self.frames_andar[int(self.frame_index)]
             
         else:
-            # parado
+            # Parado
             self.frame_index += self.animation_speed
             if self.frame_index >= len(self.frames_parado):
                 self.frame_index = 0

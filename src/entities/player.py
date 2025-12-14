@@ -20,6 +20,7 @@ class Player(pygame.sprite.Sprite):
         
         self.image = self.imagem_normal
         self.rect = self.image.get_rect(midbottom = (80, 500))
+        self.mask = pygame.mask.from_surface(self.image)
     
     def movimentacao(self):
         global gravidade, vel_x, velocidade, inercia_x

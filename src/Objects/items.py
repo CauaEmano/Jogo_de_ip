@@ -3,7 +3,7 @@ from pygame.locals import * #Usei pra evitar escrever pygame.QUIT por exemplo
 
 class Coletavel(pygame.sprite.Sprite): #Clase pai
     
-    def __init__(self, pos_x, pos_y, caminho_imagem, frames, tamanho):
+    def __init__(self, pos_x, pos_y, caminho_imagem, frames, tamanho, tipo):
         super().__init__()
         self.caminho_imagem = caminho_imagem
         self.sprites = []
@@ -17,6 +17,8 @@ class Coletavel(pygame.sprite.Sprite): #Clase pai
         self.image = self.sprites[self.atual]
         self.rect = self.image.get_rect()
         self.rect.topleft = [pos_x, pos_y] #posicionando o divo
+        self.tipo = tipo #Criei para adicionar os efeitos certos pra cada item
+        self.mask = pygame.mask.from_surface(self.image)
     
     def update(self): #Adicionando animação 
         self.atual += 0.1
@@ -31,22 +33,22 @@ class Coletavel(pygame.sprite.Sprite): #Clase pai
 class Guarana(Coletavel):
 
     def __init__(self, pos_x, pos_y):
-        super().__init__(pos_x, pos_y, "assets/images/Objetos/guarana", 9, 50)
+        super().__init__(pos_x, pos_y, "assets/images/Objetos/guarana", 9, 50, 'guarana')
 
 class Pipa(Coletavel):
     
     def __init__(self, pos_x, pos_y):
-        super().__init__(pos_x, pos_y, "assets/images/Objetos/pipa", 9, 75)
+        super().__init__(pos_x, pos_y, "assets/images/Objetos/pipa", 9, 75, 'pipa')
     
 class Pedra(Coletavel):
 
     def __init__(self, pos_x, pos_y):
-        super().__init__(pos_x, pos_y, "assets/images/Objetos/Pedra", 1, 50)
+        super().__init__(pos_x, pos_y, "assets/images/Objetos/Pedra", 1, 50, 'pedra')
     
 class Raio(Coletavel):
 
     def __init__(self, pos_x, pos_y):
-        super().__init__(pos_x, pos_y, "assets/images/Objetos/raio", 36, 100)
+        super().__init__(pos_x, pos_y, "assets/images/Objetos/raio", 36, 100, 'raio')
 
 #Descomente o código abaixo caso queria testar 
 # pygame.init()
@@ -58,7 +60,7 @@ class Raio(Coletavel):
 # guarana = Guarana(10, 10)
 # pipa = Pipa(200,200)
 # pedra = Pedra(300,300)
-# raio = Raio(250, 250)
+# raio = Raio(150, 250)
 # movendo_sprites.add(guarana)
 # movendo_sprites.add(pipa)
 # movendo_sprites.add(pedra)

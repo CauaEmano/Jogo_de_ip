@@ -23,6 +23,9 @@ plataforma1 = Plataforma(x=200, y=480, largura=120, altura=30)
 plataforma2 = Plataforma(x=450, y=400, largura=150, altura=30)
 objetos_solidos.add(chao, plataforma1, plataforma2)
 
+coletaveis = pygame.sprite.Group()
+guarana = Guarana(500, 550)
+coletaveis.add(guarana)
 
 # Loop principal
 while True:
@@ -34,6 +37,9 @@ while True:
     screen.fill('Black')
     objetos_solidos.draw(screen)
 
+    coletaveis.draw(screen)
+    coletaveis.update()
+    colidiu = pygame.sprite.spritecollide(player.sprite, coletaveis, True, pygame.sprite.collide_mask)
     player.draw(screen)
     player.update()
 

@@ -4,15 +4,15 @@ class Player(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
 
-        global gravidade, vel_x, velocidade, inercia_x, pulo_duplo, pulo_duplo_timer, tecla_cima
+        global gravidade, velocidade, inercia_x, pulo_duplo, pulo_duplo_timer, tecla_cima
 
         gravidade = 2
-        vel_x = 0
         velocidade = 10
         inercia_x = 1.5
         pulo_duplo = False
         pulo_duplo_timer = 0
         tecla_cima = False
+        self.vel_x = 0
         self.vel_y = gravidade
         self.no_ar = True
         self.flip = False
@@ -26,7 +26,7 @@ class Player(pygame.sprite.Sprite):
         self.mask = pygame.mask.from_surface(self.image)
     
     def movimentacao(self):
-        global gravidade, vel_x, velocidade, inercia_x, pulo_duplo, pulo_duplo_timer, tecla_cima
+        global gravidade, velocidade, inercia_x, pulo_duplo, pulo_duplo_timer, tecla_cima
 
         mov_esq = False
         mov_dir = False
@@ -42,10 +42,10 @@ class Player(pygame.sprite.Sprite):
 
         # Impedir direções simultâneas
         if mov_esq and not mov_dir:
-            vel_x = -velocidade
+            self.vel_x = -velocidade
             self.flip = True
         elif not mov_esq and mov_dir:
-            vel_x = velocidade
+            self.vel_x = velocidade
             self.flip = False
         
         # Inércia de movimento 
@@ -55,14 +55,14 @@ class Player(pygame.sprite.Sprite):
             pulo_duplo = False
         else: inercia_x = 0.7
 
-        if vel_x < 0:
-            vel_x += inercia_x
-            if vel_x > 0: vel_x = 0
-        elif vel_x > 0:
-            vel_x -= inercia_x
-            if vel_x < 0: vel_x = 0
+        if self.vel_x < 0:
+            self.vel_x += inercia_x
+            if self.vel_x > 0: self.vel_x = 0
+        elif self.vel_x > 0:
+            self.vel_x -= inercia_x
+            if self.vel_x < 0: self.vel_x = 0
 
-        self.rect.x += vel_x
+        self.rect.x += self.vel_x
 
         # Movimentação vertical
         # Pulo duplo   

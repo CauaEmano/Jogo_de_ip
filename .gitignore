@@ -1,4 +1,1 @@
-src/__pycache__/*
-src/core/__pycache__/*
-src/entities/__pycache__/*
-src/world/__pycache__/*
+*.pyc

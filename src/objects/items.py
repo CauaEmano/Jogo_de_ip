@@ -1,7 +1,7 @@
 import pygame
 from pygame.locals import * #Usei pra evitar escrever pygame.QUIT por exemplo
 
-class Coletavel(pygame.sprite.Sprite): #Clase pai
+class Coletavel(pygame.sprite.Sprite): #Classe pai
     
     def __init__(self, pos_x, pos_y, caminho_imagem, frames, tamanho, tipo):
         super().__init__()

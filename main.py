@@ -25,7 +25,7 @@ coletaveis = pygame.sprite.Group()
 guarana = Guarana(500, 550)
 coletaveis.add(guarana)
 
-camera = Camera(1280, 720)
+camera = Camera(1280, 720, 5000, 720)
 
 # Loop principal
 while True:

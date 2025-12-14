@@ -20,9 +20,10 @@ player.add(Player())
 # Objetos do mundo
 objetos_solidos = pygame.sprite.Group()
 chao = Chao()
+parede = Parede(x=-50, y=-100, largura=50, altura=700)
 plataforma1 = Plataforma(x=200, y=480, largura=120, altura=30)
 plataforma2 = Plataforma(x=450, y=400, largura=150, altura=30)
-objetos_solidos.add(chao, plataforma1, plataforma2)
+objetos_solidos.add(chao, parede, plataforma1, plataforma2)
 
 coletaveis = pygame.sprite.Group()
 guarana = Guarana(500, 550)

@@ -5,6 +5,7 @@ from src.entities import *
 from src.world import *
 from src.Objects import *
 from src.core import *
+from src.core.camera import Camera
 
 # Variáveis e funções essenciais
 pygame.init()
@@ -27,6 +28,8 @@ coletaveis = pygame.sprite.Group()
 guarana = Guarana(500, 550)
 coletaveis.add(guarana)
 
+camera = Camera(1280, 720)
+
 # Loop principal
 while True:
     for event in pygame.event.get():
@@ -35,15 +38,24 @@ while True:
             exit()
             
     screen.fill('Black')
-    objetos_solidos.draw(screen)
-
-    coletaveis.draw(screen)
-    coletaveis.update()
-    colidiu = pygame.sprite.spritecollide(player.sprite, coletaveis, True, pygame.sprite.collide_mask)
-    player.draw(screen)
-    player.update()
-
-    colisao(player.sprite, objetos_solidos, chao)
     
+    camera.update(player.sprite) # atualiza a posição da câmera
+    coletaveis.update()
+    player.update()
+    colisao(player.sprite, objetos_solidos, chao)
+    colidiu = pygame.sprite.spritecollide(player.sprite, coletaveis, True, pygame.sprite.collide_mask)
+
+    
+    # Desenha objetos sólidos
+    for sprite in objetos_solidos:
+        screen.blit(sprite.image, camera.aplicar_rect(sprite))
+
+    # Desenha coletáveis
+    for sprite in coletaveis:
+        screen.blit(sprite.image, camera.aplicar_rect(sprite))
+
+    # Desenha o player
+    screen.blit(player.sprite.image, camera.aplicar_rect(player.sprite))
+
     pygame.display.update()
     clock.tick(60)

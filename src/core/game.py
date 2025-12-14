@@ -14,3 +14,4 @@ def colisao(player, solidos, chao):
         elif player.vel_y >= 0 and player.rect.bottom - player.vel_y <= objeto.rect.top + 5:
             player.rect.bottom = objeto.rect.top
             player.no_ar = False
+

@@ -37,6 +37,7 @@ class Player(pygame.sprite.Sprite):
         self.image = self.frames_andar[self.frame_index]
         self.rect = self.image.get_rect(midbottom = (80, 500))
         self.mask = pygame.mask.from_surface(self.image)
+        self.inventario = {}
     
     def movimentacao(self):
         global gravidade, velocidade, inercia_x, pulo_duplo, pulo_duplo_timer, tecla_cima

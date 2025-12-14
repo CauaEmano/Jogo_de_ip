@@ -1,5 +1,5 @@
 import pygame
-from pygame.locals import * #Usei pra evitar escrever pygame.QUIT por exemplo
+# from pygame.locals import * #Usei pra evitar escrever pygame.QUIT por exemplo
 
 class Coletavel(pygame.sprite.Sprite): #Classe pai
     
@@ -28,7 +28,7 @@ class Coletavel(pygame.sprite.Sprite): #Classe pai
 
         self.image = self.sprites[int(self.atual)]
         
-#Caso queira mudar o tamanho de algum objeto mude o ultimo parametro na chamada super
+#Caso queira mudar o tamanho de algum objeto mude o penultimo parametro na chamada super
 
 class Guarana(Coletavel):
 
@@ -48,7 +48,7 @@ class Pedra(Coletavel):
 class Raio(Coletavel):
 
     def __init__(self, pos_x, pos_y):
-        super().__init__(pos_x, pos_y, "assets/images/Objetos/raio", 36, 100, 'raio')
+        super().__init__(pos_x, pos_y, "assets/images/Objetos/raio", 36, 50, 'raio')
 
 #Descomente o código abaixo caso queria testar 
 # pygame.init()

@@ -1,7 +1,7 @@
 import pygame
 # from sys import exit
 
-class UI:
+class UI: #Aqui jaz a interface do inventario
     def __init__(self):
         pygame.font.init()
         self.fonte = pygame.font.Font(None, 20)
@@ -13,7 +13,7 @@ class UI:
             'pedra': pygame.transform.scale(pygame.image.load('assets/images/Objetos/Pedra0.png'), (40,40))
         }
     
-    def display(self, superficie, inventario):
+    def display(self, superficie, inventario): #Display das informações do inventário
         pos_x = 460
         pos_y = 20
         espacamento = 100

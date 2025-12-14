@@ -35,9 +35,9 @@ class Player(pygame.sprite.Sprite):
         keys = pygame.key.get_pressed()
 
         # Movimentação lateral
-        if keys[pygame.K_LEFT]:
+        if keys[pygame.K_LEFT] or keys[pygame.K_a]:
             mov_esq = True
-        if keys[pygame.K_RIGHT]:
+        if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
             mov_dir = True
 
         # Impedir direções simultâneas
@@ -70,16 +70,16 @@ class Player(pygame.sprite.Sprite):
         else: pulo_duplo_timer = 0
         
         # keys[pygame.K_UP] and not tecla_cima tem comportamento semelhante ao KEYDOWN
-        if keys[pygame.K_UP] and not tecla_cima and self.no_ar and pulo_duplo and pulo_duplo_timer >= 12:
+        if (keys[pygame.K_UP] or keys[pygame.K_w]) and not tecla_cima and self.no_ar and pulo_duplo and pulo_duplo_timer >= 12:
             pulo_duplo = False
             self.vel_y = -20
         
         # Pulo normal
-        if keys[pygame.K_UP] and not tecla_cima and not self.no_ar:
+        if (keys[pygame.K_UP] or keys[pygame.K_w]) and not tecla_cima and not self.no_ar:
             self.vel_y = -25
             pulo_duplo = True
 
-        tecla_cima = keys[pygame.K_UP]
+        tecla_cima = (keys[pygame.K_UP] or keys[pygame.K_w])
 
         
 

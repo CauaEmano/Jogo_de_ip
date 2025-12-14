@@ -42,7 +42,6 @@ while True:
     colisao(player.sprite, objetos_solidos, parede)
     colidiu = pygame.sprite.spritecollide(player.sprite, coletaveis, True, pygame.sprite.collide_mask)
 
-    
     # Desenha objetos sólidos
     for sprite in objetos_solidos:
         screen.blit(sprite.image, camera.aplicar_rect(sprite))

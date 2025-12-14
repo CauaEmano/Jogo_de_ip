@@ -17,11 +17,24 @@ class Player(pygame.sprite.Sprite):
         self.no_ar = True
         self.flip = False
 
-        self.imagem_normal = pygame.image.load("assets/images/indio.png").convert_alpha()
-        self.imagem_normal = pygame.transform.rotozoom(self.imagem_normal, 0, 2)
-        self.imagem_invertida = pygame.transform.flip(self.imagem_normal, True, False)
-        
-        self.image = self.imagem_normal
+        # --- Configuração da Animação ---
+        self.frame_index = 0
+        self.animation_speed = 0.5  # Com 35 frames, 0.5 é um bom começo
+        self.frames_andar = []
+        self.frames_parado = []
+
+        for i in range(35):
+            img = pygame.image.load(f"assets/images/indigena/indigena_correndo{i}.png").convert_alpha()
+            img = pygame.transform.rotozoom(img, 0, 0.35)
+            self.frames_andar.append(img)
+
+        for i in range(36):
+            img = pygame.image.load(f"assets/images/indigena/indigena{i}.png").convert_alpha()
+            img = pygame.transform.rotozoom(img, 0, 0.35)
+            self.frames_parado.append(img)
+            
+        # Atributos iniciais do sprite
+        self.image = self.frames_andar[self.frame_index]
         self.rect = self.image.get_rect(midbottom = (80, 500))
         self.mask = pygame.mask.from_surface(self.image)
     
@@ -30,8 +43,6 @@ class Player(pygame.sprite.Sprite):
 
         mov_esq = False
         mov_dir = False
-        
-
         keys = pygame.key.get_pressed()
 
         # Movimentação lateral
@@ -40,7 +51,6 @@ class Player(pygame.sprite.Sprite):
         if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
             mov_dir = True
 
-        # Impedir direções simultâneas
         if mov_esq and not mov_dir:
             self.vel_x = -velocidade
             self.flip = True
@@ -48,12 +58,12 @@ class Player(pygame.sprite.Sprite):
             self.vel_x = velocidade
             self.flip = False
         
-        # Inércia de movimento 
-        # Maior no ar do que no chão
+        # Inércia
         if not self.no_ar: 
             inercia_x = 1.5
             pulo_duplo = False
-        else: inercia_x = 0.7
+        else: 
+            inercia_x = 0.7
 
         if self.vel_x < 0:
             self.vel_x += inercia_x
@@ -64,39 +74,56 @@ class Player(pygame.sprite.Sprite):
 
         self.rect.x += self.vel_x
 
-        # Movimentação vertical
-        # Pulo duplo   
+        # Pulo e Gravidade
         if pulo_duplo: pulo_duplo_timer += 1
         else: pulo_duplo_timer = 0
         
-        # keys[pygame.K_UP] and not tecla_cima tem comportamento semelhante ao KEYDOWN
         if (keys[pygame.K_UP] or keys[pygame.K_w]) and not tecla_cima and self.no_ar and pulo_duplo and pulo_duplo_timer >= 12:
             pulo_duplo = False
             self.vel_y = -20
         
-        # Pulo normal
         if (keys[pygame.K_UP] or keys[pygame.K_w]) and not tecla_cima and not self.no_ar:
             self.vel_y = -25
             pulo_duplo = True
 
         tecla_cima = (keys[pygame.K_UP] or keys[pygame.K_w])
 
-        
-
-        # Gravidade atua até atingir a velocidade terminal
-        # 25 é a velocidade terminal
         if self.vel_y <= 25:
             self.vel_y += gravidade
 
         self.rect.y += self.vel_y
 
-    def sprites(self):
-        if self.flip:
-            self.image = self.imagem_invertida
+    def animar(self):
+        # Seleciona a lista de frames baseada no estado do personagem
+        if self.no_ar:
+            # Se estiver no ar, usamos um frame fixo da corrida (ou um de pulo se tiver)
+            frame_atual = self.frames_andar[5]
+            
+        elif self.vel_x != 0:
+            # correndo
+            self.frame_index += self.animation_speed
+            if self.frame_index >= len(self.frames_andar):
+                self.frame_index = 0
+            frame_atual = self.frames_andar[int(self.frame_index)]
+            
         else:
-            self.image = self.imagem_normal
+            # parado
+            self.frame_index += self.animation_speed
+            if self.frame_index >= len(self.frames_parado):
+                self.frame_index = 0
+            frame_atual = self.frames_parado[int(self.frame_index)]
+
+        # salva a posição atual da base antes de mudar a imagem
+        pos_chao_atual = self.rect.midbottom 
+
+        # aplica a nova imagem
+        self.image = pygame.transform.flip(frame_atual, self.flip, False)
+        
+        # cria o novo rect, mas "prende" ele na posição do chão salva
+        self.rect = self.image.get_rect(midbottom = pos_chao_atual)
+        
+        self.mask = pygame.mask.from_surface(self.image)
 
     def update(self):
         self.movimentacao()
-        self.sprites()
-
+        self.animar()

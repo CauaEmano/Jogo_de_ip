@@ -24,12 +24,12 @@ class Player(pygame.sprite.Sprite):
         self.frames_parado = []
 
         for i in range(35):
-            img = pygame.image.load(f"assets/images/indigena/indigena_correndo{i}.png").convert_alpha()
+            img = pygame.image.load(f"assets/images/Indigena/indigena_correndo{i}.png").convert_alpha()
             img = pygame.transform.rotozoom(img, 0, 0.35)
             self.frames_andar.append(img)
 
         for i in range(36):
-            img = pygame.image.load(f"assets/images/indigena/indigena{i}.png").convert_alpha()
+            img = pygame.image.load(f"assets/images/Indigena/indigena{i}.png").convert_alpha()
             img = pygame.transform.rotozoom(img, 0, 0.35)
             self.frames_parado.append(img)
             

@@ -15,8 +15,8 @@ def colisao(player, solidos, chao):
             
         # Se não colidiu com o topo, checamos as laterais
         else:
-            if player.vel_x >= 0:
+            if player.vel_x > 0:
                 player.rect.right = objeto.rect.left
-            if player.vel_x <= 0:
+            if player.vel_x < 0:
                 player.rect.left = objeto.rect.right
 

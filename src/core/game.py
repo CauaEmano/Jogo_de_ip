@@ -1,6 +1,6 @@
 import pygame
 
-def colisao(player, solidos, chao):
+def colisao(player, solidos, parede):
     # inicialmente assume que está no ar
     player.no_ar = True
     
@@ -14,7 +14,7 @@ def colisao(player, solidos, chao):
             player.vel_y = 0 # Para de aplicar gravidade
             
         # Se não colidiu com o topo, checamos as laterais
-        else:
+        elif objeto == parede:
             if player.vel_x > 0:
                 player.rect.right = objeto.rect.left
             if player.vel_x < 0:

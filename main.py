@@ -39,7 +39,7 @@ while True:
     camera.update(player.sprite) # atualiza a posição da câmera
     coletaveis.update()
     player.update()
-    colisao(player.sprite, objetos_solidos, chao)
+    colisao(player.sprite, objetos_solidos, parede)
     colidiu = pygame.sprite.spritecollide(player.sprite, coletaveis, True, pygame.sprite.collide_mask)
 
     

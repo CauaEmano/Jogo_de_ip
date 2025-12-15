@@ -7,10 +7,10 @@ class UI: #Aqui jaz a interface do inventario
         self.fonte = pygame.font.Font(None, 20)
 
         self.icones = {
-            "guarana": pygame.transform.scale(pygame.image.load("assets/images/Objetos/guarana0.png"), (30, 30)),
-            "pipa": pygame.transform.scale(pygame.image.load('assets/images/Objetos/pipa0.png'), (40,40)),
-            'raio': pygame.transform.scale(pygame.image.load('assets/images/Objetos/raio0.png'), (40, 40)),
-            'pedra': pygame.transform.scale(pygame.image.load('assets/images/Objetos/Pedra0.png'), (40,40))
+            "guarana": pygame.transform.scale(pygame.image.load("assets/images/Objetos/guarana0.png").convert_alpha(), (30, 30)),
+            "pipa": pygame.transform.scale(pygame.image.load('assets/images/Objetos/pipa0.png').convert_alpha(), (40,40)),
+            'raio': pygame.transform.scale(pygame.image.load('assets/images/Objetos/raio0.png').convert_alpha(), (40, 40)),
+            'pedra': pygame.transform.scale(pygame.image.load('assets/images/Objetos/Pedra0.png').convert_alpha(), (40,40))
         }
     
     def display(self, superficie, inventario): #Display das informações do inventário

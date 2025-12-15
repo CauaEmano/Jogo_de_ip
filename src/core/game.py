@@ -1,4 +1,4 @@
-import pygame
+import pygame, random
 
 def colisao(player, solidos, parede):
     # inicialmente assume que está no ar
@@ -20,3 +20,11 @@ def colisao(player, solidos, parede):
             if player.vel_x < 0:
                 player.rect.left = objeto.rect.right
 
+def gerar_itens(coletaveis, Item, quantidade, y=600):
+    z = 0
+    f = 15000//quantidade
+    for i in range(quantidade):
+        x = random.randint(z, z + f)
+        item = Item(x, y)
+        coletaveis.add(item)
+        z += f

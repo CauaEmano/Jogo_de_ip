@@ -1,3 +1,3 @@
-from .game import colisao
+from .game import *
 from .camera import *
 from .ui import *

@@ -16,7 +16,7 @@ class Coletavel(pygame.sprite.Sprite): #Classe pai
         self.atual = 0 #Sprite atual
         self.image = self.sprites[self.atual]
         self.rect = self.image.get_rect()
-        self.rect.topleft = [pos_x, pos_y] #posicionando o divo
+        self.rect.bottomleft = [pos_x, pos_y] #posicionando o divo
         self.tipo = tipo #Criei para adicionar os efeitos certos pra cada item
         self.mask = pygame.mask.from_surface(self.image)
     

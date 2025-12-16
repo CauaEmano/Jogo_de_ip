@@ -29,7 +29,7 @@ gerar_itens(coletaveis, Pedra, 2)
 
 inimigos = pygame.sprite.Group()
 tiros_inimigos = pygame.sprite.Group()
-onca_teste = Onca(pos_x=1200, velocidade=10, vida=1)
+onca_teste = Onca(pos_x=1200, pos_y=600, velocidade=5, vida=1)
 tucano_teste = Tucano(pos_x=1000, pos_y=100, velocidade=3, vida=1, grupo_tiros=tiros_inimigos)
 capivara_teste = Capivara(pos_x=1100, pos_y=600, vida=1, grupo_tiros=tiros_inimigos)
 inimigos.add(onca_teste, tucano_teste, capivara_teste)
@@ -58,6 +58,30 @@ while True:
     player.update()
 
     colisao(player.sprite, objetos_solidos, parede)
+
+    # Colisão do tiro do Player com Inimigos (Dano ao Inimigo)
+    colisoes_pedra_inimigo = pygame.sprite.groupcollide(bullet_group, inimigos, True, False) 
+    
+    if colisoes_pedra_inimigo:
+        for inimigos_atingidos in colisoes_pedra_inimigo.values():
+            for inimigo in inimigos_atingidos:
+                # Chama o método de dano que definimos na classe Inimigo
+                inimigo.take_damage(1)
+
+    # Se houver colisão, chama take_damage no player (inimigo não é removido: False)
+    colisoes_contato = pygame.sprite.spritecollide(player.sprite, inimigos, False, pygame.sprite.collide_mask)
+    if colisoes_contato:
+        atacante = colisoes_contato[0]
+        player.sprite.take_damage(10, atacante.rect)
+
+    # Se houver colisão, chama take_damage e remove o tiro (True)
+    colisoes_tiro_inimigo = pygame.sprite.spritecollide(player.sprite, tiros_inimigos, True, pygame.sprite.collide_mask)
+    if colisoes_tiro_inimigo:
+        tiro_atacante = colisoes_tiro_inimigo[0]
+        player.sprite.take_damage(5, tiro_atacante.rect)
+
+    
+    
     colidiu = pygame.sprite.spritecollide(player.sprite, coletaveis, True, pygame.sprite.collide_mask)
     for item in colidiu: #Itera sobre os itens colididos
         if player.sprite.inventario.get(item.tipo, ''):
@@ -76,7 +100,11 @@ while True:
     # Desenha o player
     screen.blit(player.sprite.image, camera.aplicar_rect(player.sprite))
 
-    inimigos.update()
+    player_rect = player.sprite.rect 
+
+    for inimigo in inimigos:
+        inimigo.update(objetos_solidos, player_rect) 
+        
     tiros_inimigos.update() 
 
     for inimigo in inimigos:
@@ -88,7 +116,7 @@ while True:
     for sprite in bullet_group:
         screen.blit(sprite.image, camera.aplicar_rect(sprite))
 
-    interface.display(screen, player.sprite.inventario)
+    interface.display(screen, player.sprite.inventario, player.sprite.vida, player.sprite.max_vida)
 
     pygame.display.update()
     clock.tick(60)

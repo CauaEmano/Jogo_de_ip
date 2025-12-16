@@ -24,8 +24,15 @@ plataforma2 = Plataforma(x=450, y=400, largura=150, altura=30)
 objetos_solidos.add(chao, parede, plataforma1, plataforma2)
 
 coletaveis = pygame.sprite.Group()
-gerar_itens(coletaveis, Guarana, 5)
-gerar_itens(coletaveis, Pedra, 7)
+gerar_itens(coletaveis, Guarana, 2)
+gerar_itens(coletaveis, Pedra, 2)
+
+inimigos = pygame.sprite.Group()
+tiros_inimigos = pygame.sprite.Group()
+onca_teste = Onca(pos_x=1200, velocidade=10, vida=1)
+tucano_teste = Tucano(pos_x=1000, pos_y=100, velocidade=3, vida=1, grupo_tiros=tiros_inimigos)
+capivara_teste = Capivara(pos_x=1100, pos_y=600, vida=1, grupo_tiros=tiros_inimigos)
+inimigos.add(onca_teste, tucano_teste, capivara_teste)
 
 interface = UI()
 
@@ -68,6 +75,15 @@ while True:
 
     # Desenha o player
     screen.blit(player.sprite.image, camera.aplicar_rect(player.sprite))
+
+    inimigos.update()
+    tiros_inimigos.update() 
+
+    for inimigo in inimigos:
+        screen.blit(inimigo.image, camera.aplicar_rect(inimigo))
+        
+    for bala in tiros_inimigos:
+        screen.blit(bala.image, camera.aplicar_rect(bala))
 
     for sprite in bullet_group:
         screen.blit(sprite.image, camera.aplicar_rect(sprite))

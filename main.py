@@ -13,6 +13,8 @@ clock = pygame.time.Clock()
 player = pygame.sprite.GroupSingle()
 player.add(Player())
 
+bullet_group = pygame.sprite.Group()
+
 # Objetos do mundo
 objetos_solidos = pygame.sprite.Group()
 chao = Chao()
@@ -35,12 +37,19 @@ while True:
         if event.type == pygame.QUIT:
             pygame.quit()
             exit()
+
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_SPACE:
+                player.sprite.shoot(bullet_group, objetos_solidos, coletaveis, Pedra)
             
     screen.fill('Black')
     
     camera.update(player.sprite) # atualiza a posição da câmera
+
+    bullet_group.update()
     coletaveis.update()
     player.update()
+
     colisao(player.sprite, objetos_solidos, parede)
     colidiu = pygame.sprite.spritecollide(player.sprite, coletaveis, True, pygame.sprite.collide_mask)
     for item in colidiu: #Itera sobre os itens colididos
@@ -59,6 +68,10 @@ while True:
 
     # Desenha o player
     screen.blit(player.sprite.image, camera.aplicar_rect(player.sprite))
+
+    for sprite in bullet_group:
+        screen.blit(sprite.image, camera.aplicar_rect(sprite))
+
     interface.display(screen, player.sprite.inventario)
 
     pygame.display.update()

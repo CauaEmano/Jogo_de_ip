@@ -28,3 +28,4 @@ def gerar_itens(coletaveis, Item, quantidade, y=600):
         item = Item(x, y)
         coletaveis.add(item)
         z += f
+

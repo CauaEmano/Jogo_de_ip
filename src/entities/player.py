@@ -1,4 +1,6 @@
 import pygame
+from src import *
+from src.core.bullet import Bullet
 
 class Player(pygame.sprite.Sprite):
     def __init__(self):
@@ -37,7 +39,10 @@ class Player(pygame.sprite.Sprite):
         self.image = self.frames_andar[self.frame_index]
         self.rect = self.image.get_rect(midbottom = (80, 500))
         self.mask = pygame.mask.from_surface(self.image)
+        self.flip = False
         self.inventario = {'pedra': 10}
+        self.shoot_cooldown = 0
+        self.SHOOT_COOLDOWN_MAX = 20
     
     def movimentacao(self):
         global gravidade, velocidade, inercia_x, pulo_duplo, pulo_duplo_timer, tecla_cima
@@ -73,6 +78,10 @@ class Player(pygame.sprite.Sprite):
             self.vel_x -= inercia_x
             if self.vel_x < 0: self.vel_x = 0
 
+        # --- CORREÇÃO: Decrementa o contador de Cooldown ---
+        if self.shoot_cooldown > 0:
+            self.shoot_cooldown -= 1
+        
         self.rect.x += self.vel_x
 
         # Pulo e Gravidade
@@ -93,6 +102,7 @@ class Player(pygame.sprite.Sprite):
             self.vel_y += gravidade
 
         self.rect.y += self.vel_y
+
 
     def animar(self):
         # Seleciona a lista de frames baseada no estado do personagem
@@ -124,7 +134,23 @@ class Player(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(midbottom = pos_chao_atual)
         
         self.mask = pygame.mask.from_surface(self.image)
-
+    
+    def shoot(self, bullet_group, objetos_solidos, coletaveis, Pedra):
+        
+        municao_tipo = 'pedra'
+        
+        if self.shoot_cooldown == 0 and self.inventario.get(municao_tipo, 0) > 0:
+            
+            self.shoot_cooldown = self.SHOOT_COOLDOWN_MAX
+            self.inventario[municao_tipo] -= 1 
+            
+            direction = -1 if self.flip else 1
+            spawn_x = self.rect.centerx + (20 * direction)
+            
+            new_bullet = Bullet(spawn_x, self.rect.centery, direction, objetos_solidos, coletaveis, Pedra)
+            
+            bullet_group.add(new_bullet)
+    
     def update(self):
         self.movimentacao()
         self.animar()

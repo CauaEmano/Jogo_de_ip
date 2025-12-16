@@ -51,7 +51,7 @@ class Player(pygame.sprite.Sprite):
     def take_damage(self, amount=None, attacker_rect=None): 
         if self.invincible_timer <= 0:
             self.vida -= 1 
-            self.invincible_timer = self.INVINCIBILITY_DURATION
+            self.invincible_timer = 60
             
             if self.vida <= 0:
                 self.die()

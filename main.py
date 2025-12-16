@@ -38,6 +38,28 @@ interface = UI()
 
 camera = Camera(1280, 720, 15000, 720)
 
+def reiniciar_jogo():
+    # Reset do Player
+    player.add(Player())
+    
+    # Limpa grupos
+    bullet_group.empty()
+    tiros_inimigos.empty()
+    inimigos.empty()
+    coletaveis.empty()
+    
+    # Recria os inimigos e itens
+    onca_teste = Onca(pos_x=1200, pos_y=600, velocidade=5, vida=1)
+    tucano_teste = Tucano(pos_x=1000, pos_y=100, velocidade=3, vida=1, grupo_tiros=tiros_inimigos)
+    capivara_teste = Capivara(pos_x=1100, pos_y=600, vida=1, grupo_tiros=tiros_inimigos)
+    inimigos.add(onca_teste, tucano_teste, capivara_teste)
+    
+    gerar_itens(coletaveis, Guarana, 2)
+    gerar_itens(coletaveis, Pedra, 2)
+
+fonte_game_over = pygame.font.Font("assets/Fontes/WatercolorDemo.ttf", 30)
+fonte_retry = pygame.font.Font("assets/Fontes/WatercolorDemo.ttf", 20)
+
 # Loop principal
 while True:
     for event in pygame.event.get():
@@ -46,77 +68,81 @@ while True:
             exit()
 
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_SPACE:
+            if event.key == pygame.K_SPACE and player.sprite:
                 player.sprite.shoot(bullet_group, objetos_solidos, coletaveis, Pedra)
+            
+            if not player.sprite and event.key == pygame.K_r:
+                reiniciar_jogo()
             
     screen.fill('Black')
     
-    camera.update(player.sprite) # atualiza a posição da câmera
+    p = player.sprite
 
+    if p:
+        camera.update(p)
+        p.update()
+        
+        colisao(p, objetos_solidos, parede) 
+
+        if pygame.sprite.spritecollide(p, inimigos, False, pygame.sprite.collide_mask):
+            p.take_damage(1)
+
+        # 2. Player toma dano (Tiros dos inimigos)
+        colisoes_tiro_inimigo = pygame.sprite.spritecollide(p, tiros_inimigos, True, pygame.sprite.collide_mask)
+        if colisoes_tiro_inimigo:
+            p.take_damage(1)
+
+        # 3. Player pega itens
+        colidiu = pygame.sprite.spritecollide(p, coletaveis, True, pygame.sprite.collide_mask)
+        for item in colidiu:
+            p.inventario[item.tipo] = p.inventario.get(item.tipo, 0) + 1
+
+        batidas_inimigo = pygame.sprite.groupcollide(bullet_group, inimigos, True, False, pygame.sprite.collide_mask)
+        if batidas_inimigo:
+            for lista_inimigos in batidas_inimigo.values():
+                for inimigo in lista_inimigos:
+                    inimigo.take_damage(1) 
+
+        player_rect = p.rect
+    else:
+        player_rect = pygame.Rect(0,0,0,0)
+
+    # Atualizar grupos
     bullet_group.update()
     coletaveis.update()
-    player.update()
+    tiros_inimigos.update()
+    for inimigo in inimigos:
+        inimigo.update(objetos_solidos, player_rect)
 
-    colisao(player.sprite, objetos_solidos, parede)
-
-    # Colisão do tiro do Player com Inimigos (Dano ao Inimigo)
-    colisoes_pedra_inimigo = pygame.sprite.groupcollide(bullet_group, inimigos, True, False) 
-    
-    if colisoes_pedra_inimigo:
-        for inimigos_atingidos in colisoes_pedra_inimigo.values():
-            for inimigo in inimigos_atingidos:
-                # Chama o método de dano que definimos na classe Inimigo
-                inimigo.take_damage(1)
-
-    # Se houver colisão, chama take_damage no player (inimigo não é removido: False)
-    colisoes_contato = pygame.sprite.spritecollide(player.sprite, inimigos, False, pygame.sprite.collide_mask)
-    if colisoes_contato:
-        atacante = colisoes_contato[0]
-        player.sprite.take_damage(10, atacante.rect)
-
-    # Se houver colisão, chama take_damage e remove o tiro (True)
-    colisoes_tiro_inimigo = pygame.sprite.spritecollide(player.sprite, tiros_inimigos, True, pygame.sprite.collide_mask)
-    if colisoes_tiro_inimigo:
-        tiro_atacante = colisoes_tiro_inimigo[0]
-        player.sprite.take_damage(5, tiro_atacante.rect)
-
-    
-    
-    colidiu = pygame.sprite.spritecollide(player.sprite, coletaveis, True, pygame.sprite.collide_mask)
-    for item in colidiu: #Itera sobre os itens colididos
-        if player.sprite.inventario.get(item.tipo, ''):
-            player.sprite.inventario[item.tipo] += 1
-        else:
-            player.sprite.inventario[item.tipo] = 1
-
-    # Desenha objetos sólidos
+    # --- DESENHO DO MUNDO ---
     for sprite in objetos_solidos:
         screen.blit(sprite.image, camera.aplicar_rect(sprite))
-
-    # Desenha coletáveis
     for sprite in coletaveis:
         screen.blit(sprite.image, camera.aplicar_rect(sprite))
-
-    # Desenha o player
-    screen.blit(player.sprite.image, camera.aplicar_rect(player.sprite))
-
-    player_rect = player.sprite.rect 
-
-    for inimigo in inimigos:
-        inimigo.update(objetos_solidos, player_rect) 
-        
-    tiros_inimigos.update() 
-
+    for sprite in bullet_group:
+        screen.blit(sprite.image, camera.aplicar_rect(sprite))
     for inimigo in inimigos:
         screen.blit(inimigo.image, camera.aplicar_rect(inimigo))
-        
     for bala in tiros_inimigos:
         screen.blit(bala.image, camera.aplicar_rect(bala))
 
-    for sprite in bullet_group:
-        screen.blit(sprite.image, camera.aplicar_rect(sprite))
+    # Interface e Game Over
+    if p:
+        screen.blit(p.image, camera.aplicar_rect(p))
+        interface.display(screen, p.inventario, p.vida, p.max_vida)
+    else:
+        overlay = pygame.Surface((1280, 720))
+        overlay.set_alpha(150)
+        overlay.fill((30, 0, 0))
+        screen.blit(overlay, (0,0))
 
-    interface.display(screen, player.sprite.inventario, player.sprite.vida, player.sprite.max_vida)
+        texto_morte = fonte_game_over.render("Voce Morreu", True, (255, 50, 50))
+        screen.blit(texto_morte, texto_morte.get_rect(center=(640, 320)))
+
+        texto_r = fonte_retry.render("Aperte R para reiniciar", True, "White")
+        screen.blit(texto_r, texto_r.get_rect(center=(640, 420)))
+
+        interface.display(screen, {}, 0, 12)
 
     pygame.display.update()
     clock.tick(60)

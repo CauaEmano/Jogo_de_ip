@@ -6,9 +6,9 @@ from src import *
 class UI: #Aqui jaz a interface do inventario E a barra de vida
     def __init__(self):
         pygame.font.init()
-        # Fonte para o inventário (menor)
-        self.fonte = pygame.font.Font(None, 20) 
-        # Fonte para a vida (maior, opcional)
+
+        self.fonte = pygame.font.Font("assets/Fontes/WatercolorDemo.ttf", 10) 
+        self.fonte_vida = pygame.font.Font("assets/Fontes/WatercolorDemo.ttf", 30)
 
         self.heart_icon = pygame.image.load("assets/images/Objetos/coracao.png").convert_alpha()
         self.heart_icon = pygame.transform.scale(self.heart_icon, (25, 25))
@@ -43,7 +43,6 @@ class UI: #Aqui jaz a interface do inventario E a barra de vida
                 sombra.fill((50, 50, 50), special_flags=pygame.BLEND_RGB_MULT)
                 surface.blit(sombra, (x, y))
 
-    # 🚨 Método display agora aceita vida e vida_max
     def display(self, superficie, inventario, player_vida, player_max_vida): 
         
         # 1. Exibir a Barra de Vida

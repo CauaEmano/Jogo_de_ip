@@ -26,7 +26,7 @@ objetos_solidos.add(chao, parede, plataforma1, plataforma2)
 coletaveis = pygame.sprite.Group()
 gerar_itens(coletaveis, Guarana, 2)
 gerar_itens(coletaveis, Pedra, 2)
-gerar_itens(coletaveis, Pipa, 1, 500)
+gerar_itens(coletaveis, Pipa, 1, 450)
 
 inimigos = pygame.sprite.Group()
 tiros_inimigos = pygame.sprite.Group()
@@ -97,6 +97,8 @@ while True:
         colidiu = pygame.sprite.spritecollide(p, coletaveis, True, pygame.sprite.collide_mask)
         for item in colidiu:
             p.inventario[item.tipo] = p.inventario.get(item.tipo, 0) + 1
+            if item.tipo == "guarana" and player.sprite.vida < player.sprite.max_vida:
+                player.sprite.vida += 1
 
         batidas_inimigo = pygame.sprite.groupcollide(bullet_group, inimigos, True, False, pygame.sprite.collide_mask)
         if batidas_inimigo:

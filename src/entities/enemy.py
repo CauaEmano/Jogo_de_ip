@@ -91,7 +91,7 @@ class Onca(Inimigo):
         
         if abs(distance) < AGGRO_RANGE:
             # Perseguir
-            if distance > 0 and player_rect.y >= 400:
+            if distance > 0 and player_rect.y >= 300:
                 self.direction = 1 # Player está à direita
                 self.image = pygame.transform.flip(self.image, True, False)
             else:

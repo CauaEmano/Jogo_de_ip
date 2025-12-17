@@ -8,8 +8,8 @@ class Player(pygame.sprite.Sprite):
 
         global gravidade, velocidade, inercia_x, pulo_duplo, pulo_duplo_timer, tecla_cima
 
-        self.max_vida = 12
-        self.vida = 12
+        self.max_vida = 8
+        self.vida = 8
         gravidade = 2
         velocidade = 10
         inercia_x = 1.5
@@ -104,7 +104,8 @@ class Player(pygame.sprite.Sprite):
         
         if (keys[pygame.K_UP] or keys[pygame.K_w]) and not tecla_cima and not self.no_ar:
             self.vel_y = -25
-            pulo_duplo = True
+            if "pipa" in self.inventario:
+                pulo_duplo = True
 
         tecla_cima = (keys[pygame.K_UP] or keys[pygame.K_w])
         if self.vel_y <= 25:

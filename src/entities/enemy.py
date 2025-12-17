@@ -21,7 +21,7 @@ class Projetil(pygame.sprite.Sprite):
 
 class Inimigo(pygame.sprite.Sprite):
     
-    def __init__(self, pos_x, pos_y, caminho_imagem, vida=1):
+    def __init__(self, pos_x, pos_y, caminho_imagem, frames, tamanho_x, tamanho_y, vida=1):
         super().__init__()
         # Variáveis de física
         self.vel_y = 0
@@ -29,8 +29,15 @@ class Inimigo(pygame.sprite.Sprite):
         self.is_flying = False # Flag para desabilitar gravidade em aéreos
         
         # Placeholder visual
-        self.image = pygame.Surface((50,50))
-        self.image.fill((255,0,0)) 
+        self.caminho_imagem = caminho_imagem
+        self.sprites = []
+        for i in range(frames):
+            imagem_a_salvar = pygame.image.load(f'{self.caminho_imagem}{i}.png').convert_alpha()
+            imagem_a_salvar = pygame.transform.scale(imagem_a_salvar, (tamanho_x, tamanho_y))
+            self.sprites.append(imagem_a_salvar)
+        self.atual = 0
+        self.image = self.sprites[self.atual]
+
         self.rect = self.image.get_rect()
         self.rect.bottomleft = [pos_x, pos_y]
         self.mask = pygame.mask.from_surface(self.image)
@@ -65,11 +72,15 @@ class Inimigo(pygame.sprite.Sprite):
             self.apply_gravity()
             self.handle_collisions(objetos_solidos)
         
+        self.atual += 0.25
+        if self.atual >= len(self.sprites):
+            self.atual = 0 
+        self.image = self.sprites[int(self.atual)]
 
 class Onca(Inimigo):
     
     def __init__(self, pos_x, pos_y, velocidade, vida): 
-        super().__init__(pos_x, pos_y, "", vida) 
+        super().__init__(pos_x, pos_y, "assets/images/Inimigos/animais/onca", 36, 125, 75, vida) 
         self.velocidade = velocidade
         self.direction = -1 # Direção inicial de movimento
         self.is_flying = False
@@ -80,12 +91,13 @@ class Onca(Inimigo):
         
         if abs(distance) < AGGRO_RANGE:
             # Perseguir
-            if distance > 0:
+            if distance > 0 and player_rect.y >= 400:
                 self.direction = 1 # Player está à direita
+                self.image = pygame.transform.flip(self.image, True, False)
             else:
                 self.direction = -1 # Player está à esquerda
         else:
-            self.direction = 0 # Parar se estiver fora do alcance
+            self.direction = -1 # Parar se estiver fora do alcance
             
         # Aplica o movimento horizontal
         self.rect.x += self.velocidade * self.direction
@@ -94,25 +106,29 @@ class Onca(Inimigo):
     # 🚨 Update da Onça chama chase_player e super().update
     def update(self, objetos_solidos, player_rect):
         
+        super().update(objetos_solidos, player_rect) 
         if player_rect:
             self.chase_player(player_rect)
-        
-        super().update(objetos_solidos, player_rect) 
     
 
 class Tucano(Inimigo):
     
     def __init__(self, pos_x, pos_y, velocidade, vida, grupo_tiros):
-        super().__init__(pos_x, pos_y, "", vida)
+        super().__init__(pos_x, pos_y, "assets/images/Inimigos/animais/tucano", 31, 100, 100, vida)
         self.velocidade = velocidade
         self.grupo_tiros = grupo_tiros
         self.cooldown = 0
-        self.max_cooldown = 100 
+        self.max_cooldown = 50
         self.is_flying = True
         
     def update(self, objetos_solidos=None, player_rect=None):
         self.rect.x -= self.velocidade # Movimento simples para a esquerda
         self.cooldown += 1
+
+        self.atual += 0.25
+        if self.atual >= len(self.sprites):
+            self.atual = 0 
+        self.image = self.sprites[int(self.atual)]
         
         if self.cooldown > self.max_cooldown:
             self.cooldown = 0
@@ -122,21 +138,21 @@ class Tucano(Inimigo):
         # Não chama super().update() pois é voador.
 
 
-class Capivara(Inimigo):
+# class Capivara(Inimigo):
     
-    def __init__(self, pos_x, pos_y, vida, grupo_tiros):
-        super().__init__(pos_x, pos_y, "", vida) 
-        self.grupo_tiros = grupo_tiros
-        self.cooldown = 0
-        self.max_cooldown = 200 
-        self.is_flying = False
+#     def __init__(self, pos_x, pos_y, vida, grupo_tiros):
+#         super().__init__(pos_x, pos_y, "", vida) 
+#         self.grupo_tiros = grupo_tiros
+#         self.cooldown = 0
+#         self.max_cooldown = 200 
+#         self.is_flying = False
     
-    def update(self, objetos_solidos, player_rect=None):
-        self.cooldown += 1
+#     def update(self, objetos_solidos, player_rect=None):
+#         self.cooldown += 1
         
-        if self.cooldown > self.max_cooldown:
-            self.cooldown = 0
-            bomba = Projetil(self.rect.centerx, self.rect.centery, -10, 0) 
-            self.grupo_tiros.add(bomba)
+#         if self.cooldown > self.max_cooldown:
+#             self.cooldown = 0
+#             bomba = Projetil(self.rect.centerx, self.rect.centery, -10, 0) 
+#             self.grupo_tiros.add(bomba)
             
-        super().update(objetos_solidos, player_rect)
+#         super().update(objetos_solidos, player_rect)

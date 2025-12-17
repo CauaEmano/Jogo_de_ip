@@ -26,13 +26,14 @@ objetos_solidos.add(chao, parede, plataforma1, plataforma2)
 coletaveis = pygame.sprite.Group()
 gerar_itens(coletaveis, Guarana, 2)
 gerar_itens(coletaveis, Pedra, 2)
+gerar_itens(coletaveis, Pipa, 1, 500)
 
 inimigos = pygame.sprite.Group()
 tiros_inimigos = pygame.sprite.Group()
-onca_teste = Onca(pos_x=1200, pos_y=600, velocidade=5, vida=1)
+onca_teste = Onca(pos_x=1200, pos_y=600, velocidade=10, vida=1)
 tucano_teste = Tucano(pos_x=1000, pos_y=100, velocidade=3, vida=1, grupo_tiros=tiros_inimigos)
-capivara_teste = Capivara(pos_x=1100, pos_y=600, vida=1, grupo_tiros=tiros_inimigos)
-inimigos.add(onca_teste, tucano_teste, capivara_teste)
+# capivara_teste = Capivara(pos_x=1100, pos_y=600, vida=1, grupo_tiros=tiros_inimigos)
+inimigos.add(onca_teste, tucano_teste)
 
 interface = UI()
 
@@ -51,8 +52,8 @@ def reiniciar_jogo():
     # Recria os inimigos e itens
     onca_teste = Onca(pos_x=1200, pos_y=600, velocidade=5, vida=1)
     tucano_teste = Tucano(pos_x=1000, pos_y=100, velocidade=3, vida=1, grupo_tiros=tiros_inimigos)
-    capivara_teste = Capivara(pos_x=1100, pos_y=600, vida=1, grupo_tiros=tiros_inimigos)
-    inimigos.add(onca_teste, tucano_teste, capivara_teste)
+    # capivara_teste = Capivara(pos_x=1100, pos_y=600, vida=1, grupo_tiros=tiros_inimigos)
+    inimigos.add(onca_teste, tucano_teste)
     
     gerar_itens(coletaveis, Guarana, 2)
     gerar_itens(coletaveis, Pedra, 2)

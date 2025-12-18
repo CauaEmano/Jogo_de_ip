@@ -14,7 +14,7 @@ class Projetil(pygame.sprite.Sprite):
         self.rect.y += self.velocidade_y
         
         # AUMENTADO: Para não sumir em mapas grandes
-        if self.rect.x < -1000 or self.rect.x > 5000: 
+        if self.rect.x < 0 or self.rect.x > 15000: 
             self.kill()
 
 class Inimigo(pygame.sprite.Sprite):

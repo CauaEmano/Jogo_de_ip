@@ -234,5 +234,4 @@ class Player(pygame.sprite.Sprite):
                 self.die()
                 
     def die(self):
-        print("Player morreu!")
         self.kill()

@@ -79,7 +79,7 @@ while True:
         screen.blit(chao.image, (0,580))
         
         
-        texto_titulo = fonte_menu.render("CINdio", True, (240, 248, 255))
+        texto_titulo = fonte_menu.render("Helicônia", True, (240, 248, 255))
         texto_start = fonte_retry.render("Pressione ESPAÇO para Iniciar", True, "Yellow")
         
         screen.blit(texto_titulo, texto_titulo.get_rect(center=(640, 300)))

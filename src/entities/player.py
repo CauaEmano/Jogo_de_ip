@@ -29,7 +29,7 @@ class Player(pygame.sprite.Sprite):
         self.vida = 8
         self.vel_x = 0
         self.vel_y = gravidade
-        self.inventario = {'pedra': 10}
+        self.inventario = {'pedra': 20}
         # Estados
         self.no_ar = True
         self.flip = False

@@ -22,11 +22,19 @@ bullet_group = pygame.sprite.Group()
 
 # Objetos do mundo
 objetos_solidos = pygame.sprite.Group()
+objetos_solidos_pedra = pygame.sprite.Group()
 chao = Chao()
 parede = Parede(x=-50, y=-100, largura=50, altura=700)
-plataforma1 = Plataforma(x=200, y=480, largura=120, altura=30)
-plataforma2 = Plataforma(x=450, y=400, largura=150, altura=30)
-objetos_solidos.add(chao, parede, plataforma1, plataforma2)
+plataformas = [Plataforma(x=200, y=480, largura=120, altura=30),
+Plataforma(x=450, y=400, largura=150, altura=30),
+Plataforma(x=1200, y=480, largura=120, altura=30),
+Plataforma(x=1450, y=400, largura=150, altura=30),
+Plataforma(x=2200, y=480, largura=120, altura=30),
+Plataforma(x=2450, y=400, largura=150, altura=30),
+Plataforma(x=3200, y=480, largura=120, altura=30),
+Plataforma(x=3450, y=400, largura=150, altura=30)]
+objetos_solidos.add(chao, parede, plataformas)
+objetos_solidos_pedra.add(chao, parede)
 
 #Coletáveis
 coletaveis = pygame.sprite.Group()
@@ -60,7 +68,7 @@ while True:
             
             # Sua lógica original de tiro e restart
             elif event.key == pygame.K_SPACE and player.sprite:
-                player.sprite.shoot(bullet_group, objetos_solidos, coletaveis, Pedra)
+                player.sprite.shoot(bullet_group, objetos_solidos_pedra, coletaveis, Pedra)
             
             if not player.sprite and event.key == pygame.K_r:
                 player, bullet_group, tiros_inimigos, inimigos, coletaveis = carregar_nivel(player, bullet_group, tiros_inimigos, inimigos, coletaveis)

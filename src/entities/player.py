@@ -179,10 +179,10 @@ class Player(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(midbottom = pos_chao_atual)
         self.mask = pygame.mask.from_surface(self.image)
     
-    def shoot(self, bullet_group, objetos_solidos, coletaveis, Pedra):
+    def shoot(self, bullet_group, objetos_solidos_pedra, coletaveis, Pedra):
         global balas, objetos, gp_coletáveis, pedra, tiro_cooldown, tiro_cooldown_max
         balas = bullet_group
-        objetos = objetos_solidos
+        objetos = objetos_solidos_pedra
         gp_coletáveis = coletaveis
         pedra = Pedra
         

@@ -1,11 +1,22 @@
 import pygame
 
+class Background(pygame.sprite.Sprite):
+    def __init__(self):
+        super().__init__()
+        background = pygame.image.load('assets/images/cenario.png').convert() #Carreguei o fundo
+        background = pygame.transform.scale(background, (1280, 850)) #moldei o tamanho
+
+        self.image = pygame.Surface((20000, background.get_height()), pygame.SRCALPHA)  #Criei uma superfície gigante
+        for x in range(0, 20000, background.get_width()): #Iterei sobre a superfície gigante pra desenhar o fundo sobre ela
+            self.image.blit(background, (x, 0)) #Desenhando ne be
+
+        self.rect = self.image.get_rect()
+
 class Chao(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
 
         tile_img = pygame.image.load('assets/images/chao.png').convert_alpha()
-        # tile_img = pygame.transform.scale(tile_img, (tile_img.get_width(), 210))
     
         largura_tile = tile_img.get_width()
         altura_tile = tile_img.get_height() 

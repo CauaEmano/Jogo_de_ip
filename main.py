@@ -3,6 +3,26 @@ from sys import exit
 
 from src import *
 
+def reiniciar_jogo():
+    # Reset do Player
+    player.add(Player())
+    
+    # Limpa grupos
+    bullet_group.empty()
+    tiros_inimigos.empty()
+    inimigos.empty()
+    coletaveis.empty()
+    
+    # Recria os inimigos e itens
+    onca_teste = Onca(pos_x=1200, pos_y=600, velocidade=10, vida=1)
+    tucano_teste = Tucano(pos_x=1000, pos_y=100, velocidade=3, vida=1, grupo_tiros=tiros_inimigos)
+    capivara_teste = Capivara(pos_x=1100, pos_y=600, vida=1, grupo_tiros=tiros_inimigos)
+    inimigos.add(onca_teste, tucano_teste, capivara_teste)
+    
+    gerar_itens(coletaveis, Guarana, 3)
+    gerar_itens(coletaveis, Pedra, 5)
+    gerar_itens(coletaveis, Pipa, 1, 450)
+
 # Variáveis e funções essenciais
 pygame.init()
 screen = pygame.display.set_mode((1280,720))
@@ -23,11 +43,13 @@ plataforma1 = Plataforma(x=200, y=480, largura=120, altura=30)
 plataforma2 = Plataforma(x=450, y=400, largura=150, altura=30)
 objetos_solidos.add(chao, parede, plataforma1, plataforma2)
 
+#Coletáveis
 coletaveis = pygame.sprite.Group()
-gerar_itens(coletaveis, Guarana, 2)
-gerar_itens(coletaveis, Pedra, 2)
+gerar_itens(coletaveis, Guarana, 3)
+gerar_itens(coletaveis, Pedra, 5)
 gerar_itens(coletaveis, Pipa, 1, 450)
 
+#Inimigos
 inimigos = pygame.sprite.Group()
 tiros_inimigos = pygame.sprite.Group()
 onca_teste = Onca(pos_x=1200, pos_y=600, velocidade=10, vida=1)
@@ -39,30 +61,10 @@ interface = UI()
 
 camera = Camera(1280, 720, 15000, 720)
 
-def reiniciar_jogo():
-    # Reset do Player
-    player.add(Player())
-    
-    # Limpa grupos
-    bullet_group.empty()
-    tiros_inimigos.empty()
-    inimigos.empty()
-    coletaveis.empty()
-    
-    # Recria os inimigos e itens
-    onca_teste = Onca(pos_x=1200, pos_y=600, velocidade=5, vida=1)
-    tucano_teste = Tucano(pos_x=1000, pos_y=100, velocidade=3, vida=1, grupo_tiros=tiros_inimigos)
-    capivara_teste = Capivara(pos_x=1100, pos_y=600, vida=1, grupo_tiros=tiros_inimigos)
-    inimigos.add(onca_teste, tucano_teste, capivara_teste)
-    
-    gerar_itens(coletaveis, Guarana, 2)
-    gerar_itens(coletaveis, Pedra, 2)
-
 fonte_game_over = pygame.font.Font("assets/Fontes/WatercolorDemo.ttf", 30)
 fonte_retry = pygame.font.Font("assets/Fontes/WatercolorDemo.ttf", 20)
 
-background = pygame.image.load('assets/images/cenario.png').convert()
-background = pygame.transform.scale(background, (1280, 850))
+background = Background()
 
 # Loop principal
 while True:
@@ -77,8 +79,6 @@ while True:
             
             if not player.sprite and event.key == pygame.K_r:
                 reiniciar_jogo()
-            
-    screen.blit(background, (0,0))
     
     p = player.sprite
 
@@ -121,6 +121,7 @@ while True:
         inimigo.update(objetos_solidos, player_rect)
 
     # --- DESENHO DO MUNDO ---
+    screen.blit(background.image, camera.aplicar_rect(background))
     for sprite in objetos_solidos:
         screen.blit(sprite.image, camera.aplicar_rect(sprite))
     for sprite in coletaveis:

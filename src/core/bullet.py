@@ -11,7 +11,7 @@ class Bullet(pygame.sprite.Sprite):
         # tirei o self maskpq tava travando glr, a colisão agr vai ser por rect
         
         # Variáveis de Movimento
-        self.speed_x = 40
+        self.speed_x = 20
         self.vel_y = 0
         self.GRAVITY = 0.2
         self.direction = direction

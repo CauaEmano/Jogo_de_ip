@@ -1,4 +1,4 @@
-# Sem Nome
+# Helicônia
 
 > **Status do Projeto:** Em desenvolvimento
 
@@ -41,8 +41,8 @@ O jogo retrata a história de helicônia, uma guerreira indígena, abençoada po
       </a>
     </td>
     <td align="center">
-      <a href="https://github.com/ElleSamara">
-        <img src="https://github.com/ElleSamara.png" width="100px;" alt="Foto de Elane"/><br>
+      <a href="https://github.com/ellesamarasllm">
+        <img src="https://github.com/ellesamarasllm.png" width="100px;" alt="Foto de Elane"/><br>
         <sub>
           <b>Elane</b>
         </sub>
@@ -52,17 +52,35 @@ O jogo retrata a história de helicônia, uma guerreira indígena, abençoada po
 </table>
 
 ---
+## 🏗️ Arquitetura do Jogo
 
-## 🏗️ Arquitetura do Projeto
+O projeto segue uma estrutura modular.
 
-*Descreva aqui como os arquivos e pastas estão organizados. Explique a lógica por trás da estrutura (ex: separação MVC, divisão por cenas, organização de assets).*
+```mermaid
+classDiagram
+    class Main {
+        +run()
+    }
+    class Game {
+        +update()
+        +draw()
+    }
+    class World {
+        +Level
+        +Platforms
+    }
+    class Entities {
+        +Player
+        +Enemy
+    }
+    class Core {
+        +Camera
+        +Events
+        +UI
+    }
 
-**Estrutura de Diretórios:**
-```text
-/src
-  /assets        # Sprites, sons e fontes
-  /components    # Componentes reutilizáveis
-  /scenes        # Cenas do jogo (Menu, Fase 1, GameOver)
-  /utils         # Funções auxiliares e scripts globais
-  main.js        # Ponto de entrada
-README.md
+    Main --> Game : Inicializa
+    Game --> World : Carrega Mapa
+    Game --> Core : Gerencia Sistemas
+    World --> Entities : Contém
+    Core ..> Entities : Renderiza/Controla

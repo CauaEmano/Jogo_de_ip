@@ -52,7 +52,7 @@ fonte_game_over = pygame.font.Font("assets/Fontes/WatercolorDemo.ttf", 30)
 fonte_retry = pygame.font.Font("assets/Fontes/WatercolorDemo.ttf", 20)
 
 background = Background()
-
+subboss_spawnado = False
 # Loop principal
 while True:
     for event in pygame.event.get():

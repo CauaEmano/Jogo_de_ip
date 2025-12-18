@@ -56,43 +56,42 @@ O jogo retrata a história de helicônia, uma guerreira indígena, abençoada po
 
 O projeto segue uma estrutura modular.
 
-classDiagram
-    class Main {
-        +run()
-    }
-    class Game {
-        +gerar_itens()
-        +carregar_nivel()
-    }
-    class Objetos {
-        +Guarana
-        +Pipa
-        +Raio
-        +Pedra
-    }
-    class World {
-        +Level
-        +Platforms
-    }
-    class Entities {
-        +Player
-        +Enemy
-    }
-    class Core {
-        +Camera
-        +Events
-        +UI
-        +Game_Logic
-        +Bullet
-    }
+graph TD
+    %% Nós (Nodes)
+    Main([🚀 main.py])
+    
+    subgraph Engine [⚙️ Core & Lógica]
+        Game[🎮 Game Controller]
+        CoreFiles[Camera, Events, UI, Bullet]
+    end
+    
+    subgraph Map [🌍 Mundo]
+        World[🗺️ Level & Platforms]
+    end
+    
+    subgraph Actors [👾 Entidades]
+        Player[🏃 Player]
+        Enemy[💀 Enemy]
+    end
+    
+    subgraph Items [📦 Objetos / Drops]
+        Objs[⚡ Raio, 🥤 Guaraná, 🪁 Pipa, 🪨 Pedra]
+    end
 
-    Main --> Game : Inicializa
-    Game --> World : Carrega Mapa
-    Game --> Core : Gerencia Sistemas
-    Game --> Objetos : Gera (Spawns)
-    World --> Entities : Contém
-    Core ..> Entities : Renderiza/Controla
-
+    %% Relações
+    Main -->|Start| Game
+    Game -->|Update| CoreFiles
+    Game -->|Load| World
+    Game -->|Spawn| Objs
+    World -->|Contém| Player & Enemy
+    CoreFiles -.->|Controla| Player
+    
+    %% Estilização (Cores)
+    style Main fill:#f9f,stroke:#333,stroke-width:2px,color:black
+    style Game fill:#bbf,stroke:#333,stroke-width:2px,color:black
+    style Objs fill:#ff9,stroke:#e6b800,stroke-width:2px,stroke-dasharray: 5 5,color:black
+    style Player fill:#bfb,stroke:#333,stroke-width:2px,color:black
+    style Enemy fill:#fbb,stroke:#333,stroke-width:2px,color:black
 ## 📂 Estrutura de Diretórios
 
 A organização do código fonte (`src`) é dividida por responsabilidades:

@@ -138,21 +138,21 @@ class Tucano(Inimigo):
         # Não chama super().update() pois é voador.
 
 
-# class Capivara(Inimigo):
+class Capivara(Inimigo):
     
-#     def __init__(self, pos_x, pos_y, vida, grupo_tiros):
-#         super().__init__(pos_x, pos_y, "", vida) 
-#         self.grupo_tiros = grupo_tiros
-#         self.cooldown = 0
-#         self.max_cooldown = 200 
-#         self.is_flying = False
+    def __init__(self, pos_x, pos_y, vida, grupo_tiros):
+        super().__init__(pos_x, pos_y, "assets/images/Inimigos/animais/capivara", 36, 50, 50, vida)
+        self.grupo_tiros = grupo_tiros
+        self.cooldown = 0
+        self.max_cooldown = 100
+        self.is_flying = False
     
-#     def update(self, objetos_solidos, player_rect=None):
-#         self.cooldown += 1
+    def update(self, objetos_solidos, player_rect=None):
+        self.cooldown += 1
         
-#         if self.cooldown > self.max_cooldown:
-#             self.cooldown = 0
-#             bomba = Projetil(self.rect.centerx, self.rect.centery, -10, 0) 
-#             self.grupo_tiros.add(bomba)
+        if self.cooldown > self.max_cooldown:
+            self.cooldown = 0
+            bomba = Projetil(self.rect.centerx, self.rect.centery, -10, 0) 
+            self.grupo_tiros.add(bomba)
             
-#         super().update(objetos_solidos, player_rect)
+        super().update(objetos_solidos, player_rect)

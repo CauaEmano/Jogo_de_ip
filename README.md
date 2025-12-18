@@ -54,7 +54,7 @@ O jogo retrata a história de helicônia, uma guerreira indígena, abençoada po
 ---
 ## 🏗️ Arquitetura do Jogo
 
-O projeto segue uma estrutura modular, separando a lógica do jogo (`Game Controller`), as entidades e o mundo.
+O projeto segue uma estrutura modular.
 
 ```mermaid
 graph TD
@@ -92,7 +92,7 @@ graph TD
     style Game fill:#bbf,stroke:#333,stroke-width:2px,color:black
     style Objs fill:#ff9,stroke:#e6b800,stroke-width:2px,stroke-dasharray: 5 5,color:black
     style Player fill:#bfb,stroke:#333,stroke-width:2px,color:black
-    style Enemy fill:#fbb,stroke:#333,stroke-width:2px,color:black
+    style Enemy fill:#fbb,stroke:#333,stroke-width:2px,color:black ```
 
 
 ## 📂 Estrutura de Diretórios

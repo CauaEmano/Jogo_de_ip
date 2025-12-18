@@ -66,7 +66,6 @@ class Inimigo(pygame.sprite.Sprite):
                 self.rect.top = platform.rect.bottom
             self.vel_y = 0
             
-    # 🚨 Base update agora aceita player_rect (para compatibilidade)
     def update(self, objetos_solidos=None, player_rect=None):
         if objetos_solidos is not None and not self.is_flying:
             self.apply_gravity()
@@ -99,7 +98,6 @@ class Onca(Inimigo):
         self.direction = -1 # Direção inicial de movimento
         self.is_flying = False
 
-    # 🚨 Update da Onça chama chase_player e super().update
     def update(self, objetos_solidos, player_rect):
         
         super().update(objetos_solidos, player_rect) 

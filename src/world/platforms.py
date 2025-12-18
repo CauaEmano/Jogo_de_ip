@@ -41,8 +41,8 @@ class Plataforma (pygame.sprite.Sprite):
     def __init__(self, x, y, largura, altura):
         super().__init__()
 
-        self.image = pygame.Surface([largura, altura])
-        self.image.fill("Green")
+        imagem_plataforma = pygame.image.load('assets/images/plataforma.png').convert_alpha()
+        self.image = pygame.transform.scale(imagem_plataforma, (largura, altura))
 
         self.rect = self.image.get_rect(left = x, top = y)
 

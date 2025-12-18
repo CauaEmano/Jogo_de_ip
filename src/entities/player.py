@@ -6,13 +6,14 @@ class Player(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
 
+        # Mantendo as globais conforme seu código original
         global gravidade, velocidade, inercia_x, pulo_duplo, pulo_duplo_timer
         global invencib_timer, invencib_duracao
         global tiro_cooldown, tiro_cooldown_max
         global tecla_pulo, tecla_tiro
         global frame_index, animation_speed
 
-        # Variáveis globais (usadas apenas na classe)
+        # Variáveis de física e timers
         gravidade = 2
         velocidade = 10
         inercia_x = 1.5
@@ -20,7 +21,7 @@ class Player(pygame.sprite.Sprite):
         pulo_duplo_timer = 0
         tecla_pulo = False
         invencib_timer = 0
-        invencib_duracao = 60 # 1 segundo de invulnerabilidade (em 60 FPS)
+        invencib_duracao = 60 
         tiro_cooldown = 0
         tiro_cooldown_max = 40
 
@@ -30,7 +31,6 @@ class Player(pygame.sprite.Sprite):
         self.vel_x = 0
         self.vel_y = gravidade
         self.inventario = {'pedra': 10}
-        # Estados
         self.no_ar = True
         self.flip = False
         self.atirando = False
@@ -42,7 +42,7 @@ class Player(pygame.sprite.Sprite):
         self.frames_parado = []
         self.frames_atirando = []
 
-        # (Carregamento de imagens mantido igual ao seu original)
+        # Carregamento de imagens
         for i in range(35):
             img = pygame.image.load(f"assets/images/Indigena/indigena_correndo{i}.png").convert_alpha()
             img = pygame.transform.rotozoom(img, 0, 0.35)
@@ -62,14 +62,11 @@ class Player(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(midbottom = (80, 500))
         self.mask = pygame.mask.from_surface(self.image)
 
-        # Rect separado para hitbox
-        self.hitbox = pygame.Rect(0, 0, 
-                                 self.rect.width * 0.6,  # 60% da largura
-                                 self.rect.height * 0.75) # 70% da altura
-        self.hitbox.x = self.rect.x
-        self.hitbox.bottom = self.rect.bottom
+        # Hitbox (Este é o retângulo que a função colisao deve usar)
+        self.hitbox = pygame.Rect(0, 0, self.rect.width * 0.6, self.rect.height * 0.75)
+        self.hitbox.midbottom = self.rect.midbottom
 
-        #Carregando sons
+        # Sons
         self.som_pulo = pygame.mixer.Sound('assets/audios/pulo.wav')
         self.som_pulo.set_volume(0.3)
         self.som_hit = pygame.mixer.Sound('assets/audios/Hit.wav')
@@ -88,10 +85,9 @@ class Player(pygame.sprite.Sprite):
         if not self.atirando:
             if keys[pygame.K_LEFT] or keys[pygame.K_a]:
                 mov_esq = True 
-                self.som_caminhar.play()
+                # Sugestão: adicione um timer para o som não tocar todo frame
             if keys[pygame.K_RIGHT] or keys[pygame.K_d]: 
                 mov_dir = True
-                self.som_caminhar.play()
 
         if mov_esq and not mov_dir:
             self.vel_x = -velocidade
@@ -100,7 +96,7 @@ class Player(pygame.sprite.Sprite):
             self.vel_x = velocidade
             self.flip = False
         
-        # Inércia do movimento
+        # Inércia
         if not self.no_ar: 
             inercia_x = 1.5
             pulo_duplo = False
@@ -113,7 +109,6 @@ class Player(pygame.sprite.Sprite):
         elif self.vel_x > 0:
             self.vel_x -= inercia_x
             if self.vel_x < 0: self.vel_x = 0
-
 
         if pulo_duplo: pulo_duplo_timer += 1
         else: pulo_duplo_timer = 0
@@ -134,48 +129,45 @@ class Player(pygame.sprite.Sprite):
         if self.vel_y <= 25:
             self.vel_y += gravidade
 
-
         self.rect.x += self.vel_x
         self.rect.y += self.vel_y
 
     def animar(self):
-        global frame_index, animation_speed
+        global frame_index, animation_speed, invencib_timer
 
-        if self.atirando: # Animação atirando
+        # 1. Seleciona o frame correto
+        if self.atirando:
             animation_speed = 0.4
             frame_index += animation_speed
-            if frame_index >= len(self.frames_atirando):
-                frame_index = 0
+            if frame_index >= len(self.frames_atirando): frame_index = 0
             frame_atual = self.frames_atirando[int(frame_index)]
-
-        elif self.no_ar: # Visual quando está no ar
+        elif self.no_ar:
             frame_atual = self.frames_andar[5]
-
-
-
-        elif self.vel_x != 0: # Animação andando
+        elif self.vel_x != 0:
             animation_speed = 0.4
             frame_index += animation_speed
-            if frame_index >= len(self.frames_andar):
-                frame_index = 0
+            if frame_index >= len(self.frames_andar): frame_index = 0
             frame_atual = self.frames_andar[int(frame_index)]
-
-        else: # Animação em idle
+        else:
             animation_speed = 0.4
             frame_index += animation_speed
-            if frame_index >= len(self.frames_parado):
-                frame_index = 0
+            if frame_index >= len(self.frames_parado): frame_index = 0
             frame_atual = self.frames_parado[int(frame_index)]
 
         pos_chao_atual = self.rect.midbottom 
 
-        # Efeito visual opcional de piscar ao receber dano BUG
-        if invencib_timer > 0 and (pygame.time.get_ticks() // 100) % 2 == 0:
-            # Não desenha a imagem (cria efeito de piscar)
-            self.image = pygame.Surface((0,0))
+        # 2. Aplica o flip
+        self.image = pygame.transform.flip(frame_atual, self.flip, False)
+
+        # 3. CORREÇÃO DO PISCAR (Alpha em vez de Surface 0,0)
+        if invencib_timer > 0:
+            # Alterna entre invisível (0) e visível (255) baseado no tempo
+            alpha = 0 if (pygame.time.get_ticks() // 100) % 2 == 0 else 255
+            self.image.set_alpha(alpha)
         else:
-            self.image = pygame.transform.flip(frame_atual, self.flip, False)
+            self.image.set_alpha(255) # Garante que volte ao normal
         
+        # 4. Atualiza Rect e Mask sem perder as dimensões
         self.rect = self.image.get_rect(midbottom = pos_chao_atual)
         self.mask = pygame.mask.from_surface(self.image)
     
@@ -190,13 +182,11 @@ class Player(pygame.sprite.Sprite):
         if tiro_cooldown == 0 and self.inventario.get(municao_tipo, 0) > 0:
             self.som_tiro.play()
             self.atirando = True
-
             tiro_cooldown = tiro_cooldown_max
             self.inventario[municao_tipo] -= 1 
         
     def update(self):
-        global keys
-        global invencib_timer, tiro_cooldown
+        global keys, invencib_timer, tiro_cooldown
         global balas, objetos, gp_coletáveis, pedra
 
         keys = pygame.key.get_pressed()
@@ -219,17 +209,15 @@ class Player(pygame.sprite.Sprite):
         self.movimentacao()
         self.animar()
 
+        # O hitbox sempre segue o pé da imagem, não importa o tamanho do rect
         self.hitbox.midbottom = self.rect.midbottom
-
 
     def take_damage(self, amount=None, attacker_rect=None):
         global invencib_timer
-
         if invencib_timer <= 0:
             self.som_hit.play()
             self.vida -= 1 
-            invencib_timer = 60
-            
+            invencib_timer = 60 # 1 segundo de paz
             if self.vida <= 0:
                 self.die()
                 

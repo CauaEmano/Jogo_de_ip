@@ -1,13 +1,11 @@
 import pygame
 
 class Projetil(pygame.sprite.Sprite):
-    """Projetil usado pelos inimigos (Tucano, Capivara)."""
     def __init__(self, x, y, velocidade_x, velocidade_y):
         super().__init__()
         self.image = pygame.Surface((10,10))
         self.image.fill('Yellow')
-        self.rect = self.image.get_rect()
-        self.rect.center = [x, y]
+        self.rect = self.image.get_rect(center=(x, y))
         self.velocidade_x = velocidade_x
         self.velocidade_y = velocidade_y
 
@@ -15,8 +13,8 @@ class Projetil(pygame.sprite.Sprite):
         self.rect.x += self.velocidade_x
         self.rect.y += self.velocidade_y
         
-        # Destruir projétil fora dos limites da tela (ajuste os valores conforme o tamanho do seu mapa)
-        if self.rect.x < -100 or self.rect.x > 1380 or self.rect.y < -100 or self.rect.y > 820:
+        # AUMENTADO: Para não sumir em mapas grandes
+        if self.rect.x < -1000 or self.rect.x > 5000: 
             self.kill()
 
 class Inimigo(pygame.sprite.Sprite):
@@ -68,7 +66,6 @@ class Inimigo(pygame.sprite.Sprite):
                 self.rect.top = platform.rect.bottom
             self.vel_y = 0
             
-    # 🚨 Base update agora aceita player_rect (para compatibilidade)
     def update(self, objetos_solidos=None, player_rect=None):
         if objetos_solidos is not None and not self.is_flying:
             self.apply_gravity()
@@ -208,22 +205,31 @@ class Tucano(Inimigo):
 
 
 class Capivara(Inimigo):
-    
     def __init__(self, pos_x, pos_y, vida, grupo_tiros):
-        super().__init__(pos_x, pos_y, "assets/images/Inimigos/animais/capivara", 36, 50, 50, vida)
+       
+        super().__init__(pos_x, pos_y, "assets/images/Inimigos/animais/capivara", 36, 60, 60, vida)
         self.grupo_tiros = grupo_tiros
         self.cooldown = 0
         self.max_cooldown = 100
         self.is_flying = False
-    
+
     def update(self, objetos_solidos, player_rect=None):
-        self.cooldown += 1
-        
-        if self.cooldown > self.max_cooldown:
-            self.cooldown = 0
-            bomba = Projetil(self.rect.centerx, self.rect.centery, -10, 0) 
-            self.grupo_tiros.add(bomba)
+        # 1. Verificar se o player existe para evitar erros
+        if player_rect:
+            distancia = player_rect.centerx - self.rect.centerx
             
+        
+            if abs(distancia) < 1000:
+                self.cooldown += 1
+                
+                if self.cooldown > self.max_cooldown:
+                    self.cooldown = 0
+                    
+                    direcao_tiro = -10 if distancia < 0 else 10
+                    
+                    bomba = Projetil(self.rect.centerx, self.rect.centery, direcao_tiro, 0) 
+                    self.grupo_tiros.add(bomba)
+        
         super().update(objetos_solidos, player_rect)
 
 class SubBoss(Inimigo):

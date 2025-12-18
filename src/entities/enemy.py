@@ -264,9 +264,6 @@ class SubBoss(Inimigo):
     def update(self, objetos_solidos=None, player_rect=None):
         # Gravidade
         super().update(objetos_solidos, player_rect)
-        
-        # Espelha a imagem
-        self.image = pygame.transform.flip(self.image, True, False) if self.direction == -1 else self.image
 
         if player_rect:
             self.chase_player(player_rect)

@@ -2,7 +2,7 @@ import pygame
 from src import *
 
 class Bullet(pygame.sprite.Sprite):
-    def __init__(self, x, y, direction, objetos_solidos, coletaveis, classe_pedra):
+    def __init__(self, x, y, direction, objetos_solidos_pedra, coletaveis, classe_pedra):
         super().__init__()
         
         self.image = pygame.image.load("assets/images/Objetos/Pedra0.png").convert_alpha()
@@ -16,7 +16,7 @@ class Bullet(pygame.sprite.Sprite):
         self.GRAVITY = 0.2
         self.direction = direction
         
-        self.objetos_solidos = objetos_solidos
+        self.objetos_solidos = objetos_solidos_pedra
         self.coletaveis = coletaveis               
         self.Pedra_Coletavel = classe_pedra
 

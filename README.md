@@ -54,8 +54,9 @@ O jogo retrata a história de helicônia, uma guerreira indígena, abençoada po
 ---
 ## 🏗️ Arquitetura do Jogo
 
-O projeto segue uma estrutura modular.
+O projeto segue uma estrutura modular, separando a lógica do jogo (`Game Controller`), as entidades e o mundo.
 
+```mermaid
 graph TD
     %% Nós (Nodes)
     Main([🚀 main.py])
@@ -92,6 +93,8 @@ graph TD
     style Objs fill:#ff9,stroke:#e6b800,stroke-width:2px,stroke-dasharray: 5 5,color:black
     style Player fill:#bfb,stroke:#333,stroke-width:2px,color:black
     style Enemy fill:#fbb,stroke:#333,stroke-width:2px,color:black
+
+
 ## 📂 Estrutura de Diretórios
 
 A organização do código fonte (`src`) é dividida por responsabilidades:
@@ -106,7 +109,6 @@ A organização do código fonte (`src`) é dividida por responsabilidades:
     │   ├── game.py       # Loop principal e lógica de estado
     │   ├── camera.py     # Sistema de câmera (scroll)
     │   ├── events.py     # Gerenciador de inputs
-    |   ├── camera.py     # Gerencia a câmera que acompanha o player
     │   └── ui.py         # HUD e Menus
     ├── 📂 entities       # Atores do jogo
     │   ├── player.py     # Lógica do jogador
@@ -120,3 +122,24 @@ A organização do código fonte (`src`) é dividida por responsabilidades:
 ![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)
 ![Pygame](https://img.shields.io/badge/Pygame-333333?style=for-the-badge&logo=python&logoColor=2ea44f)
 ![Status](https://img.shields.io/badge/Status-Em_Desenvolvimento-yellow?style=for-the-badge)
+
+
+<div align="center">
+  <h3>📸 Gameplay</h3>
+  <img src="assets/demo.gif" width="700px" />
+</div>
+
+## 🛠️ Ferramentas Utilizadas
+
+Abaixo estão listadas as tecnologias, bibliotecas e serviços utilizados no desenvolvimento do projeto, bem como a motivação para a escolha de cada uma.
+
+| Categoria | Ferramenta | Justificativa |
+| :---: | :--- | :--- |
+| **Código** | <img src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white" width="100px"> | Linguagem base do projeto, escolhida pela simplicidade e legibilidade. |
+| **Engine** | <img src="https://img.shields.io/badge/Pygame-333333?style=for-the-badge&logo=python&logoColor=2ea44f" width="100px"> | Biblioteca robusta para renderização 2D e gerenciamento de loop de jogo. |
+| **Lógica** | `Random` (Lib) | Essencial para a geração procedural de inimigos e spawns de itens, garantindo variabilidade ao gameplay. |
+| **IDE** | <img src="https://img.shields.io/badge/VS_Code-007ACC?style=for-the-badge&logo=visual-studio-code&logoColor=white" width="100px"> | Escolhido pelo suporte excelente a Python (via extensões) e terminal integrado. |
+| **Assets** | **Ludo.ai** | Ferramenta de IA utilizada para acelerar a geração criativa de sprites e conceitos visuais. |
+| **Edição** | **Ezgif** | Utilizado para manipulação, conversão e otimização dos sprites e GIFs animados. |
+| **Gestão** | <img src="https://img.shields.io/badge/Notion-000000?style=for-the-badge&logo=notion&logoColor=white" width="100px"> | Centralização da documentação, brainstorms e organização das tarefas (Kanban) da equipe. |
+| **Git** | <img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white" width="100px"> | Repositório central para versionamento de código e colaboração entre os membros. |

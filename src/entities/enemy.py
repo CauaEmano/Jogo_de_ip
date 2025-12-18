@@ -234,45 +234,31 @@ class Capivara(Inimigo):
 
 class SubBoss(Inimigo):
     def __init__(self, pos_x, pos_y):
-        super().__init__(pos_x, pos_y, "assets/images/Inimigos/animais/capivara", 1, 120, 120, 30) 
+        super().__init__(pos_x, pos_y, "assets/images/Inimigos/Subboss/subboss", 36, 120, 150, 15) 
         
-        # Criamos a superfície vermelha explicitamente
-        self.image = pygame.Surface((120, 120))
-        self.image.fill((255, 0, 0))  # Vermelho Vivo para facilitar a visão
-        
-        # Definimos o Rect e a Mask
-        self.rect = self.image.get_rect(bottomleft=(pos_x, pos_y))
-        self.mask = pygame.mask.from_surface(self.image)
-        
-        # Atributos de comportamento
-        self.sprites = [self.image]
         self.atual = 0
-        self.velocidade = 2
+        self.velocidade = 0.4 
         self.direction = -1
         self.is_flying = False
-        self.vida = 30
-        
+        self.pos_x_float = float(pos_x)
+
     def chase_player(self, player_rect):
         distancia = player_rect.centerx - self.rect.centerx
-        if abs(distancia) < 1000: # Aumentado para ele te ver de mais longe
+        
+        if abs(distancia) < 1000: # Visão maior
             self.direction = 1 if distancia > 0 else -1
-            self.rect.x += self.velocidade * self.direction
+            
+            # Movimentação usando FLOAT
+            self.pos_x_float += self.velocidade * self.direction
+            self.rect.x = int(self.pos_x_float) # Converte para inteiro só para desenhar
 
     def update(self, objetos_solidos=None, player_rect=None):
         # Gravidade
-        if objetos_solidos and not self.is_flying:
-            self.vel_y += self.GRAVITY
-            self.rect.y += self.vel_y
-
-            # Colisão com o chão
-            collided = pygame.sprite.spritecollide(self, objetos_solidos, False)
-            if collided:
-                platform = collided[0]
-                if self.vel_y > 0:
-                    self.rect.bottom = platform.rect.top
-                self.vel_y = 0
+        super().update(objetos_solidos, player_rect)
+        
+        # Espelha a imagem
+        self.image = pygame.transform.flip(self.image, True, False) if self.direction == -1 else self.image
 
         if player_rect:
             self.chase_player(player_rect)
-            
         

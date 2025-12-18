@@ -188,7 +188,6 @@ class Tucano(Inimigo):
         self.is_flying = True
         
     def update(self, objetos_solidos=None, player_rect=None):
-        self.rect.x -= self.velocidade # Movimento simples para a esquerda
         self.cooldown += 1
 
         self.atual += 0.25
@@ -201,7 +200,8 @@ class Tucano(Inimigo):
             bomba = Projetil(self.rect.centerx, self.rect.centery, 0, 10) 
             self.grupo_tiros.add(bomba)
         
-        # Não chama super().update() pois é voador.
+        super().update(objetos_solidos, player_rect)
+        self.rect.x += self.velocidade * self.direction
 
 
 class Capivara(Inimigo):

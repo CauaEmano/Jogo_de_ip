@@ -69,6 +69,15 @@ class Player(pygame.sprite.Sprite):
         self.hitbox.x = self.rect.x
         self.hitbox.bottom = self.rect.bottom
 
+        #Carregando sons
+        self.som_pulo = pygame.mixer.Sound('assets/audios/pulo.wav')
+        self.som_pulo.set_volume(0.3)
+        self.som_hit = pygame.mixer.Sound('assets/audios/Hit.wav')
+        self.som_hit.set_volume(0.3)
+        self.som_tiro = pygame.mixer.Sound('assets/audios/tiro.wav')
+        self.som_tiro.set_volume(0.3)
+        self.som_caminhar = pygame.mixer.Sound('assets/audios/caminhar.wav')
+        self.som_caminhar.set_volume(0.3)
     
     def movimentacao(self):
         global gravidade, velocidade, inercia_x, pulo_duplo, pulo_duplo_timer, tecla_pulo, keys
@@ -77,8 +86,12 @@ class Player(pygame.sprite.Sprite):
         mov_dir = False
 
         if not self.atirando:
-            if keys[pygame.K_LEFT] or keys[pygame.K_a]: mov_esq = True
-            if keys[pygame.K_RIGHT] or keys[pygame.K_d]: mov_dir = True
+            if keys[pygame.K_LEFT] or keys[pygame.K_a]:
+                mov_esq = True 
+                self.som_caminhar.play()
+            if keys[pygame.K_RIGHT] or keys[pygame.K_d]: 
+                mov_dir = True
+                self.som_caminhar.play()
 
         if mov_esq and not mov_dir:
             self.vel_x = -velocidade
@@ -109,10 +122,12 @@ class Player(pygame.sprite.Sprite):
             if (keys[pygame.K_UP] or keys[pygame.K_w]) and not tecla_pulo and self.no_ar and pulo_duplo and pulo_duplo_timer >= 12:
                 pulo_duplo = False
                 self.vel_y = -20
+                self.som_pulo.play()
             
             if (keys[pygame.K_UP] or keys[pygame.K_w]) and not tecla_pulo and not self.no_ar:
                 pulo_duplo = True if "pipa" in self.inventario else False
                 self.vel_y = -25
+                self.som_pulo.play()
 
         tecla_pulo = (keys[pygame.K_UP] or keys[pygame.K_w])
 
@@ -173,6 +188,7 @@ class Player(pygame.sprite.Sprite):
         
         municao_tipo = 'pedra'
         if tiro_cooldown == 0 and self.inventario.get(municao_tipo, 0) > 0:
+            self.som_tiro.play()
             self.atirando = True
 
             tiro_cooldown = tiro_cooldown_max
@@ -210,6 +226,7 @@ class Player(pygame.sprite.Sprite):
         global invencib_timer
 
         if invencib_timer <= 0:
+            self.som_hit.play()
             self.vida -= 1 
             invencib_timer = 60
             

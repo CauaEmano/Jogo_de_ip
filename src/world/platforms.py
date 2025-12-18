@@ -37,14 +37,19 @@ class Chao(pygame.sprite.Sprite):
 
         self.rect = self.image.get_rect(top=600, left=0)
 
-class Plataforma (pygame.sprite.Sprite):
+class Plataforma(pygame.sprite.Sprite):
     def __init__(self, x, y, largura, altura):
         super().__init__()
 
-        imagem_plataforma = pygame.image.load('assets/images/plataforma.png').convert_alpha()
-        self.image = pygame.transform.scale(imagem_plataforma, (largura, altura))
+        img_bruta = pygame.image.load('assets/images/plataforma.png').convert_alpha()
 
-        self.rect = self.image.get_rect(left = x, top = y)
+        rect_real = img_bruta.get_bounding_rect()
+
+        img_limpa = img_bruta.subsurface(rect_real)
+
+        self.image = pygame.transform.scale(img_limpa, (largura, altura))
+
+        self.rect = self.image.get_rect(topleft=(x, y))
 
 class Parede (pygame.sprite.Sprite):
     def __init__(self, x, y, largura, altura):

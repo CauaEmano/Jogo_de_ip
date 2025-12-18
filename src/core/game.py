@@ -50,7 +50,7 @@ def carregar_nivel(player, bullet_group, tiros_inimigos, inimigos, coletaveis):
     inimigos.add(onca2, onca3, onca4, capivara4, capivara5, tucano3, tucano4, tucano5)
 
     #zona final
-    boss = SubBoss(pos_x=500, pos_y=600) 
+    boss = SubBoss(pos_x=14500, pos_y=600) 
     inimigos.add(boss)
 
     gerar_itens(coletaveis, Guarana, 3)

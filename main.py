@@ -97,7 +97,12 @@ while True:
     # --- DESENHO DO MUNDO ---
     screen.blit(background.image, camera.aplicar_rect(background))
     for sprite in objetos_solidos:
-        screen.blit(sprite.image, camera.aplicar_rect(sprite))
+        if sprite == chao:
+            chao_rect = camera.aplicar_rect(sprite)
+            chao_rect.y -= 20
+            screen.blit(sprite.image, chao_rect)
+        else:
+            screen.blit(sprite.image, camera.aplicar_rect(sprite))
     for sprite in coletaveis:
         screen.blit(sprite.image, camera.aplicar_rect(sprite))
     for sprite in bullet_group:

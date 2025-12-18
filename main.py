@@ -102,8 +102,9 @@ while True:
             if colisoes_tiro_inimigo:
                 p.take_damage(1)
 
-            colidiu = pygame.sprite.spritecollide(p, coletaveis, True, pygame.sprite.collide_mask)
+            colidiu = [objeto for objeto in coletaveis if p.hitbox.colliderect(objeto.rect)]
             for item in colidiu:
+                item.kill()
                 p.inventario[item.tipo] = p.inventario.get(item.tipo, 0) + 1
                 if item.tipo == "guarana" and player.sprite.vida < player.sprite.max_vida:
                     player.sprite.vida += 1

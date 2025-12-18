@@ -24,15 +24,9 @@ bullet_group = pygame.sprite.Group()
 objetos_solidos = pygame.sprite.Group()
 chao = Chao()
 parede = Parede(x=-50, y=-100, largura=50, altura=700)
-plataformas = [Plataforma(x=200, y=480, largura=120, altura=30),
-Plataforma(x=450, y=400, largura=150, altura=30),
-Plataforma(x=1200, y=480, largura=120, altura=30),
-Plataforma(x=1450, y=400, largura=150, altura=30),
-Plataforma(x=2200, y=480, largura=120, altura=30),
-Plataforma(x=2450, y=400, largura=150, altura=30),
-Plataforma(x=3200, y=480, largura=120, altura=30),
-Plataforma(x=3450, y=400, largura=150, altura=30)]
-objetos_solidos.add(chao, parede, plataformas)
+plataforma1 = Plataforma(x=200, y=480, largura=120, altura=30)
+plataforma2 = Plataforma(x=450, y=400, largura=150, altura=30)
+objetos_solidos.add(chao, parede, plataforma1, plataforma2)
 
 #Coletáveis
 coletaveis = pygame.sprite.Group()
@@ -50,7 +44,7 @@ fonte_game_over = pygame.font.Font("assets/Fontes/WatercolorDemo.ttf", 30)
 fonte_retry = pygame.font.Font("assets/Fontes/WatercolorDemo.ttf", 20)
 
 background = Background()
-
+subboss_spawnado = False
 # Loop principal
 while True:
     for event in pygame.event.get():

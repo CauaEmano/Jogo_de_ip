@@ -16,7 +16,7 @@ class Projetil(pygame.sprite.Sprite):
         self.rect.y += self.velocidade_y
         
         # Destruir projétil fora dos limites da tela (ajuste os valores conforme o tamanho do seu mapa)
-        if self.rect.x < -100 or self.rect.x > 15000 or self.rect.y < -100 or self.rect.y > 15000:
+        if self.rect.x < -100 or self.rect.x > 1380 or self.rect.y < -100 or self.rect.y > 820:
             self.kill()
 
 class Inimigo(pygame.sprite.Sprite):
@@ -68,6 +68,7 @@ class Inimigo(pygame.sprite.Sprite):
                 self.rect.top = platform.rect.bottom
             self.vel_y = 0
             
+    # 🚨 Base update agora aceita player_rect (para compatibilidade)
     def update(self, objetos_solidos=None, player_rect=None):
         if objetos_solidos is not None and not self.is_flying:
             self.apply_gravity()
@@ -188,19 +189,23 @@ class Tucano(Inimigo):
         self.cooldown = 0
         self.max_cooldown = 50
         self.is_flying = True
-        self.direction = -1
         
-    def update(self, objetos_solidos, player_rect):
+    def update(self, objetos_solidos=None, player_rect=None):
+        self.rect.x -= self.velocidade # Movimento simples para a esquerda
         self.cooldown += 1
 
-        super().update(objetos_solidos, player_rect)
-        self.rect.x += self.velocidade * self.direction
-
+        self.atual += 0.25
+        if self.atual >= len(self.sprites):
+            self.atual = 0 
+        self.image = self.sprites[int(self.atual)]
+        
         if self.cooldown > self.max_cooldown:
             self.cooldown = 0
             bomba = Projetil(self.rect.centerx, self.rect.centery, 0, 10) 
             self.grupo_tiros.add(bomba)
         
+        # Não chama super().update() pois é voador.
+
 
 class Capivara(Inimigo):
     
@@ -211,13 +216,57 @@ class Capivara(Inimigo):
         self.max_cooldown = 100
         self.is_flying = False
     
-    def update(self, objetos_solidos, player_rect):
+    def update(self, objetos_solidos, player_rect=None):
         self.cooldown += 1
         
+        if self.cooldown > self.max_cooldown:
+            self.cooldown = 0
+            bomba = Projetil(self.rect.centerx, self.rect.centery, -10, 0) 
+            self.grupo_tiros.add(bomba)
+            
         super().update(objetos_solidos, player_rect)
 
-        if self.cooldown > self.max_cooldown and self.direction != 0:
-            self.cooldown = 0
-            velocidade = self.direction * 10
-            bomba = Projetil(self.rect.centerx, self.rect.centery, velocidade, 0) 
-            self.grupo_tiros.add(bomba)
+class SubBoss(Inimigo):
+    def __init__(self, pos_x, pos_y):
+        super().__init__(pos_x, pos_y, "assets/images/Inimigos/animais/capivara", 1, 120, 120, 30) 
+        
+        # Criamos a superfície vermelha explicitamente
+        self.image = pygame.Surface((120, 120))
+        self.image.fill((255, 0, 0))  # Vermelho Vivo para facilitar a visão
+        
+        # Definimos o Rect e a Mask
+        self.rect = self.image.get_rect(bottomleft=(pos_x, pos_y))
+        self.mask = pygame.mask.from_surface(self.image)
+        
+        # Atributos de comportamento
+        self.sprites = [self.image]
+        self.atual = 0
+        self.velocidade = 2
+        self.direction = -1
+        self.is_flying = False
+        self.vida = 30
+        
+    def chase_player(self, player_rect):
+        distancia = player_rect.centerx - self.rect.centerx
+        if abs(distancia) < 1000: # Aumentado para ele te ver de mais longe
+            self.direction = 1 if distancia > 0 else -1
+            self.rect.x += self.velocidade * self.direction
+
+    def update(self, objetos_solidos=None, player_rect=None):
+        # Gravidade
+        if objetos_solidos and not self.is_flying:
+            self.vel_y += self.GRAVITY
+            self.rect.y += self.vel_y
+
+            # Colisão com o chão
+            collided = pygame.sprite.spritecollide(self, objetos_solidos, False)
+            if collided:
+                platform = collided[0]
+                if self.vel_y > 0:
+                    self.rect.bottom = platform.rect.top
+                self.vel_y = 0
+
+        if player_rect:
+            self.chase_player(player_rect)
+            
+        

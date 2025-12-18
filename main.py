@@ -61,6 +61,9 @@ def reiniciar_jogo():
 fonte_game_over = pygame.font.Font("assets/Fontes/WatercolorDemo.ttf", 30)
 fonte_retry = pygame.font.Font("assets/Fontes/WatercolorDemo.ttf", 20)
 
+background = pygame.image.load('assets/images/cenario.png').convert()
+background = pygame.transform.scale(background, (1280, 850))
+
 # Loop principal
 while True:
     for event in pygame.event.get():
@@ -75,7 +78,7 @@ while True:
             if not player.sprite and event.key == pygame.K_r:
                 reiniciar_jogo()
             
-    screen.fill('Black')
+    screen.blit(background, (0,0))
     
     p = player.sprite
 

@@ -62,8 +62,14 @@ classDiagram
         +run()
     }
     class Game {
-        +update()
-        +draw()
+        +gerar_itens()
+        +carregar_nivel()
+    }
+    class Objeto {
+        +Guarana()
+        +Pipa()
+        +Raio()
+        +Pedra()
     }
     class World {
         +Level
@@ -74,13 +80,45 @@ classDiagram
         +Enemy
     }
     class Core {
-        +Camera
-        +Events
-        +UI
+        +Camera.py
+        +Events.py
+        +UI.py
+        +Game.py
+        +bullet.py
     }
 
     Main --> Game : Inicializa
     Game --> World : Carrega Mapa
     Game --> Core : Gerencia Sistemas
+    Game --> Objeto : Gera os objetos
     World --> Entities : Contém
     Core ..> Entities : Renderiza/Controla
+
+## 📂 Estrutura de Diretórios
+
+A organização do código fonte (`src`) é dividida por responsabilidades:
+
+```text
+📂 JOGO_DE_IP
+├── 📄 main.py            # Ponto de entrada (Entry Point)
+├── 📂 assets             # Sprites, sons e fontes
+└── 📂 src
+    ├── 📂 core           # Motor do jogo
+    │   ├── bullet.py     # Ataque do player
+    │   ├── game.py       # Loop principal e lógica de estado
+    │   ├── camera.py     # Sistema de câmera (scroll)
+    │   ├── events.py     # Gerenciador de inputs
+    |   ├── camera.py     # Gerencia a câmera que acompanha o player
+    │   └── ui.py         # HUD e Menus
+    ├── 📂 entities       # Atores do jogo
+    │   ├── player.py     # Lógica do jogador
+    │   └── enemy.py      # Lógica dos inimigos
+    ├── 📂 world          # Ambiente
+    │   ├── level.py      # Carregamento de mapas
+    │   └── platforms.py  # Colisões e estruturas
+    └── 📂 objects        # Itens interagíveis
+        └── items.py      # Gerencia os coletáveis
+
+![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)
+![Pygame](https://img.shields.io/badge/Pygame-333333?style=for-the-badge&logo=python&logoColor=2ea44f)
+![Status](https://img.shields.io/badge/Status-Em_Desenvolvimento-yellow?style=for-the-badge)

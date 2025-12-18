@@ -56,7 +56,6 @@ O jogo retrata a história de helicônia, uma guerreira indígena, abençoada po
 
 O projeto segue uma estrutura modular.
 
-```mermaid
 classDiagram
     class Main {
         +run()
@@ -65,11 +64,11 @@ classDiagram
         +gerar_itens()
         +carregar_nivel()
     }
-    class Objeto {
-        +Guarana()
-        +Pipa()
-        +Raio()
-        +Pedra()
+    class Objetos {
+        +Guarana
+        +Pipa
+        +Raio
+        +Pedra
     }
     class World {
         +Level
@@ -80,17 +79,17 @@ classDiagram
         +Enemy
     }
     class Core {
-        +Camera.py
-        +Events.py
-        +UI.py
-        +Game.py
-        +bullet.py
+        +Camera
+        +Events
+        +UI
+        +Game_Logic
+        +Bullet
     }
 
     Main --> Game : Inicializa
     Game --> World : Carrega Mapa
     Game --> Core : Gerencia Sistemas
-    Game --> Objeto : Gera os objetos
+    Game --> Objetos : Gera (Spawns)
     World --> Entities : Contém
     Core ..> Entities : Renderiza/Controla
 

@@ -29,7 +29,7 @@ class Player(pygame.sprite.Sprite):
         self.vida = 8
         self.vel_x = 0
         self.vel_y = gravidade
-        self.inventario = {'pedra': 20}
+        self.inventario = {'pedra': 10}
         # Estados
         self.no_ar = True
         self.flip = False
@@ -203,8 +203,8 @@ class Player(pygame.sprite.Sprite):
         self.movimentacao()
         self.animar()
 
-        self.hitbox.centerx = self.rect.centerx
-        self.hitbox.bottom = self.rect.bottom
+        self.hitbox.midbottom = self.rect.midbottom
+
 
     def take_damage(self, amount=None, attacker_rect=None):
         global invencib_timer

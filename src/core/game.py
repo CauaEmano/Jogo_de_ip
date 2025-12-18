@@ -33,15 +33,15 @@ def carregar_nivel(player, bullet_group, tiros_inimigos, inimigos, coletaveis):
     
     #zona 2
     tucano1 = Tucano(pos_x=2500, pos_y=400, velocidade=3, vida=1, grupo_tiros=tiros_inimigos)
-    onca1 = Onca(pos_x=3230, pos_y=600, velocidade=10, vida=2)
+    onca1 = Onca(pos_x=3230, pos_y=600, velocidade=5, vida=2)
     capivara3 = Capivara(pos_x=4000, pos_y=600, vida=1, grupo_tiros=tiros_inimigos)
     tucano2 = Tucano(pos_x=4000, pos_y=400, velocidade=3, vida=1, grupo_tiros=tiros_inimigos)
     inimigos.add(tucano1, onca1, capivara3, tucano2)
     
     #Zona 3
-    onca2 = Onca(pos_x=5000, pos_y=600, velocidade=10, vida=2)
-    onca3 = Onca(pos_x=7000, pos_y=600, velocidade=10, vida=2)
-    onca4 = Onca(pos_x=12000, pos_y=600, velocidade=10, vida=2)
+    onca2 = Onca(pos_x=5000, pos_y=600, velocidade=5, vida=2)
+    onca3 = Onca(pos_x=7000, pos_y=600, velocidade=5, vida=2)
+    onca4 = Onca(pos_x=12000, pos_y=600, velocidade=5, vida=2)
     capivara4 = Capivara(pos_x=6000, pos_y=600, vida=1, grupo_tiros=tiros_inimigos)
     capivara5 = Capivara(pos_x=10000, pos_y=600, vida=1, grupo_tiros=tiros_inimigos)
     tucano3 = Tucano(pos_x=6000, pos_y=400, velocidade=3, vida=1, grupo_tiros=tiros_inimigos)

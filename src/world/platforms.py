@@ -36,20 +36,23 @@ class Chao(pygame.sprite.Sprite):
             else: self.image.blit(tile_flipado, (x, 0))
 
         self.rect = self.image.get_rect(top=600, left=0)
+        
+        self.hitbox = self.rect.copy()
 
 class Plataforma(pygame.sprite.Sprite):
     def __init__(self, x, y, largura, altura):
         super().__init__()
-
         img_bruta = pygame.image.load('assets/images/plataforma.png').convert_alpha()
-
         rect_real = img_bruta.get_bounding_rect()
-
         img_limpa = img_bruta.subsurface(rect_real)
-
         self.image = pygame.transform.scale(img_limpa, (largura, altura))
 
         self.rect = self.image.get_rect(topleft=(x, y))
+
+        ajuste_vão = 10 
+        self.hitbox = self.rect.copy()
+        self.hitbox.top += ajuste_vão
+        self.hitbox.height -= ajuste_vão
 
 class Parede (pygame.sprite.Sprite):
     def __init__(self, x, y, largura, altura):
@@ -59,3 +62,4 @@ class Parede (pygame.sprite.Sprite):
         self.image.fill("Blue")
 
         self.rect = self.image.get_rect(left = x, top = y)
+        self.hitbox = self.rect.copy()

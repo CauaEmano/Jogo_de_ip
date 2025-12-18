@@ -1,15 +1,24 @@
 import pygame
 
 class Projetil(pygame.sprite.Sprite):
-    def __init__(self, x, y, velocidade_x, velocidade_y):
+    def __init__(self, x, y, velocidade_x, velocidade_y, tipo=0):
         super().__init__()
-        self.image = pygame.Surface((10,10))
-        self.image.fill('Yellow')
+        self.tipo = tipo
+        
+        if tipo == 0:
+            self.image = pygame.Surface((10,10))
+            self.image.fill('Yellow')
+        elif tipo == 1:
+            self.image = pygame.image.load("assets/images/Inimigos/animais/projetil_tucano.png").convert_alpha()
+            self.image = pygame.transform.scale(self.image, (25,25))
+
         self.rect = self.image.get_rect(center=(x, y))
         self.velocidade_x = velocidade_x
         self.velocidade_y = velocidade_y
 
     def update(self):
+        if self.tipo == 1: self.velocidade_y += 1
+
         self.rect.x += self.velocidade_x
         self.rect.y += self.velocidade_y
         
@@ -197,7 +206,7 @@ class Tucano(Inimigo):
         
         if self.cooldown > self.max_cooldown:
             self.cooldown = 0
-            bomba = Projetil(self.rect.centerx, self.rect.centery, 0, 10) 
+            bomba = Projetil(self.rect.centerx, self.rect.centery + 20, 0, 0, 1) 
             self.grupo_tiros.add(bomba)
         
         super().update(objetos_solidos, player_rect)

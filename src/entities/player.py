@@ -201,8 +201,9 @@ class Player(pygame.sprite.Sprite):
 
         if self.atirando and tiro_cooldown == 30:
             direction = -1 if self.flip else 1
-            spawn_x = self.rect.centerx + (20 * direction)
-            new_bullet = Bullet(spawn_x, self.rect.centery, direction, objetos, gp_coletáveis, pedra)
+            spawn_x = self.hitbox.centerx + (20 * direction)
+
+            new_bullet = Bullet(spawn_x, self.hitbox.centery - 25, direction, objetos, gp_coletáveis, pedra)
             balas.add(new_bullet)
 
         self.movimentacao()

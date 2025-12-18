@@ -3,7 +3,7 @@ from sys import exit
 
 from src import *
 
-def reiniciar_jogo():
+def carregar_nivel():
     # Reset do Player
     player.add(Player())
     
@@ -14,10 +14,15 @@ def reiniciar_jogo():
     coletaveis.empty()
     
     # Recria os inimigos e itens
-    onca_teste = Onca(pos_x=1200, pos_y=600, velocidade=10, vida=1)
-    tucano_teste = Tucano(pos_x=1000, pos_y=100, velocidade=3, vida=1, grupo_tiros=tiros_inimigos)
-    capivara_teste = Capivara(pos_x=1100, pos_y=600, vida=1, grupo_tiros=tiros_inimigos)
-    inimigos.add(onca_teste, tucano_teste, capivara_teste)
+    capivara = Capivara(pos_x=1600, pos_y=600, vida=1, grupo_tiros=tiros_inimigos)
+    capivara1 = Capivara(pos_x=900, pos_y=600, vida=1, grupo_tiros=tiros_inimigos)
+    capivara2 = Capivara(pos_x=2000, pos_y=600, vida=1, grupo_tiros=tiros_inimigos)
+    tucano = Tucano(pos_x=1000, pos_y=400, velocidade=3, vida=1, grupo_tiros=tiros_inimigos)
+    tucano1 = Tucano(pos_x=3000, pos_y=400, velocidade=3, vida=1, grupo_tiros=tiros_inimigos)
+    tucano2 = Tucano(pos_x=4000, pos_y=400, velocidade=3, vida=1, grupo_tiros=tiros_inimigos)
+    capivara3 = Capivara(pos_x=3500, pos_y=600, vida=1, grupo_tiros=tiros_inimigos)
+    inimigos.add(capivara, capivara1, capivara2, capivara3)
+    inimigos.add(tucano, tucano1, tucano2)
     
     gerar_itens(coletaveis, Guarana, 3)
     gerar_itens(coletaveis, Pedra, 5)
@@ -45,18 +50,12 @@ objetos_solidos.add(chao, parede, plataforma1, plataforma2)
 
 #Coletáveis
 coletaveis = pygame.sprite.Group()
-gerar_itens(coletaveis, Guarana, 3)
-gerar_itens(coletaveis, Pedra, 5)
-gerar_itens(coletaveis, Pipa, 1, 450)
 
 #Inimigos
 inimigos = pygame.sprite.Group()
 tiros_inimigos = pygame.sprite.Group()
-onca_teste = Onca(pos_x=1200, pos_y=600, velocidade=10, vida=1)
-tucano_teste = Tucano(pos_x=1000, pos_y=100, velocidade=3, vida=1, grupo_tiros=tiros_inimigos)
-capivara_teste = Capivara(pos_x=1100, pos_y=600, vida=1, grupo_tiros=tiros_inimigos)
-inimigos.add(onca_teste, tucano_teste, capivara_teste)
 
+carregar_nivel()
 interface = UI()
 
 camera = Camera(1280, 720, 15000, 720)
@@ -78,7 +77,7 @@ while True:
                 player.sprite.shoot(bullet_group, objetos_solidos, coletaveis, Pedra)
             
             if not player.sprite and event.key == pygame.K_r:
-                reiniciar_jogo()
+                carregar_nivel()
     
     p = player.sprite
 

@@ -16,7 +16,7 @@ class Projetil(pygame.sprite.Sprite):
         self.rect.y += self.velocidade_y
         
         # Destruir projétil fora dos limites da tela (ajuste os valores conforme o tamanho do seu mapa)
-        if self.rect.x < -100 or self.rect.x > 1380 or self.rect.y < -100 or self.rect.y > 820:
+        if self.rect.x < -100 or self.rect.x > 15000 or self.rect.y < -100 or self.rect.y > 15000:
             self.kill()
 
 class Inimigo(pygame.sprite.Sprite):
@@ -77,6 +77,20 @@ class Inimigo(pygame.sprite.Sprite):
             self.atual = 0 
         self.image = self.sprites[int(self.atual)]
 
+        AGGRO_RANGE = 800
+        distance = player_rect.centerx - self.rect.centerx
+        
+        if abs(distance) < AGGRO_RANGE:
+            # Perseguir
+            if distance > 0:
+                self.direction = 1 # Player está à direita
+                self.image = pygame.transform.flip(self.image, True, False)
+            else:
+                self.direction = -1 # Player está à esquerda
+        else:
+            self.direction = 0 # Parar se estiver fora do alcance
+
+
 class Onca(Inimigo):
     
     def __init__(self, pos_x, pos_y, velocidade, vida): 
@@ -84,31 +98,12 @@ class Onca(Inimigo):
         self.velocidade = velocidade
         self.direction = -1 # Direção inicial de movimento
         self.is_flying = False
-    
-    def chase_player(self, player_rect):
-        AGGRO_RANGE = 500
-        distance = player_rect.centerx - self.rect.centerx
-        
-        if abs(distance) < AGGRO_RANGE:
-            # Perseguir
-            if distance > 0 and player_rect.y >= 300:
-                self.direction = 1 # Player está à direita
-                self.image = pygame.transform.flip(self.image, True, False)
-            else:
-                self.direction = -1 # Player está à esquerda
-        else:
-            self.direction = -1 # Parar se estiver fora do alcance
-            
-        # Aplica o movimento horizontal
-        self.rect.x += self.velocidade * self.direction
-
 
     # 🚨 Update da Onça chama chase_player e super().update
     def update(self, objetos_solidos, player_rect):
         
         super().update(objetos_solidos, player_rect) 
-        if player_rect:
-            self.chase_player(player_rect)
+        self.rect.x += self.velocidade * self.direction
     
 
 class Tucano(Inimigo):
@@ -120,23 +115,19 @@ class Tucano(Inimigo):
         self.cooldown = 0
         self.max_cooldown = 50
         self.is_flying = True
+        self.direction = -1
         
-    def update(self, objetos_solidos=None, player_rect=None):
-        self.rect.x -= self.velocidade # Movimento simples para a esquerda
+    def update(self, objetos_solidos, player_rect):
         self.cooldown += 1
 
-        self.atual += 0.25
-        if self.atual >= len(self.sprites):
-            self.atual = 0 
-        self.image = self.sprites[int(self.atual)]
-        
+        super().update(objetos_solidos, player_rect)
+        self.rect.x += self.velocidade * self.direction
+
         if self.cooldown > self.max_cooldown:
             self.cooldown = 0
             bomba = Projetil(self.rect.centerx, self.rect.centery, 0, 10) 
             self.grupo_tiros.add(bomba)
         
-        # Não chama super().update() pois é voador.
-
 
 class Capivara(Inimigo):
     
@@ -147,12 +138,13 @@ class Capivara(Inimigo):
         self.max_cooldown = 100
         self.is_flying = False
     
-    def update(self, objetos_solidos, player_rect=None):
+    def update(self, objetos_solidos, player_rect):
         self.cooldown += 1
         
-        if self.cooldown > self.max_cooldown:
-            self.cooldown = 0
-            bomba = Projetil(self.rect.centerx, self.rect.centery, -10, 0) 
-            self.grupo_tiros.add(bomba)
-            
         super().update(objetos_solidos, player_rect)
+
+        if self.cooldown > self.max_cooldown and self.direction != 0:
+            self.cooldown = 0
+            velocidade = self.direction * 10
+            bomba = Projetil(self.rect.centerx, self.rect.centery, velocidade, 0) 
+            self.grupo_tiros.add(bomba)

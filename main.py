@@ -1,32 +1,7 @@
 import pygame
 from sys import exit
-
 from src import *
 
-def carregar_nivel():
-    # Reset do Player
-    player.add(Player())
-    
-    # Limpa grupos
-    bullet_group.empty()
-    tiros_inimigos.empty()
-    inimigos.empty()
-    coletaveis.empty()
-    
-    # Recria os inimigos e itens
-    capivara = Capivara(pos_x=1600, pos_y=600, vida=1, grupo_tiros=tiros_inimigos)
-    capivara1 = Capivara(pos_x=900, pos_y=600, vida=1, grupo_tiros=tiros_inimigos)
-    capivara2 = Capivara(pos_x=2000, pos_y=600, vida=1, grupo_tiros=tiros_inimigos)
-    tucano = Tucano(pos_x=1000, pos_y=400, velocidade=3, vida=1, grupo_tiros=tiros_inimigos)
-    tucano1 = Tucano(pos_x=3000, pos_y=400, velocidade=3, vida=1, grupo_tiros=tiros_inimigos)
-    tucano2 = Tucano(pos_x=4000, pos_y=400, velocidade=3, vida=1, grupo_tiros=tiros_inimigos)
-    capivara3 = Capivara(pos_x=3500, pos_y=600, vida=1, grupo_tiros=tiros_inimigos)
-    inimigos.add(capivara, capivara1, capivara2, capivara3)
-    inimigos.add(tucano, tucano1, tucano2)
-    
-    gerar_itens(coletaveis, Guarana, 3)
-    gerar_itens(coletaveis, Pedra, 5)
-    gerar_itens(coletaveis, Pipa, 1, 450)
 
 # Variáveis e funções essenciais
 pygame.init()
@@ -55,7 +30,7 @@ coletaveis = pygame.sprite.Group()
 inimigos = pygame.sprite.Group()
 tiros_inimigos = pygame.sprite.Group()
 
-carregar_nivel()
+player, bullet_group, tiros_inimigos, inimigos, coletaveis = carregar_nivel(player, bullet_group, tiros_inimigos, inimigos, coletaveis)
 interface = UI()
 
 camera = Camera(1280, 720, 15000, 720)
@@ -77,7 +52,7 @@ while True:
                 player.sprite.shoot(bullet_group, objetos_solidos, coletaveis, Pedra)
             
             if not player.sprite and event.key == pygame.K_r:
-                carregar_nivel()
+                player, bullet_group, tiros_inimigos, inimigos, coletaveis = carregar_nivel(player, bullet_group, tiros_inimigos, inimigos, coletaveis)
     
     p = player.sprite
 
@@ -85,7 +60,7 @@ while True:
         camera.update(p)
         p.update()
         
-        colisao(p, objetos_solidos, parede) 
+        colisao(p, objetos_solidos, chao, parede) 
 
         if pygame.sprite.spritecollide(p, inimigos, False, pygame.sprite.collide_mask):
             p.take_damage(1)
@@ -131,6 +106,7 @@ while True:
         screen.blit(inimigo.image, camera.aplicar_rect(inimigo))
     for bala in tiros_inimigos:
         screen.blit(bala.image, camera.aplicar_rect(bala))
+
 
     # Interface e Game Over
     if p:

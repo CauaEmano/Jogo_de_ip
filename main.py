@@ -2,12 +2,15 @@ import pygame
 from sys import exit
 from src import *
 
-
 # Variáveis e funções essenciais
 pygame.init()
 screen = pygame.display.set_mode((1280,720))
 pygame.display.set_caption('Jogo')
 clock = pygame.time.Clock()
+
+# --- NOVO: Variável de estado e Fonte para o Menu ---
+em_jogo = False 
+fonte_menu = pygame.font.Font("assets/Fontes/WatercolorDemo.ttf", 50)
 
 # Objeto do player
 player = pygame.sprite.GroupSingle()
@@ -54,88 +57,106 @@ while True:
             exit()
 
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_SPACE and player.sprite:
+            # --- NOVO: Iniciar o jogo ao apertar Espaço ou Enter ---
+            if not em_jogo:
+                if event.key == pygame.K_SPACE or event.key == pygame.K_RETURN:
+                    em_jogo = True
+            
+            # Sua lógica original de tiro e restart
+            elif event.key == pygame.K_SPACE and player.sprite:
                 player.sprite.shoot(bullet_group, objetos_solidos, coletaveis, Pedra)
             
             if not player.sprite and event.key == pygame.K_r:
                 player, bullet_group, tiros_inimigos, inimigos, coletaveis = carregar_nivel(player, bullet_group, tiros_inimigos, inimigos, coletaveis)
     
-    p = player.sprite
-
-    if p:
-        camera.update(p)
-        p.update()
+    # tela inicial
+    if not em_jogo:
+        screen.blit(background.image, (0,0)) 
+        screen.blit(chao.image, (0,580))
         
-        colisao(p, objetos_solidos, chao, parede) 
-
-        if pygame.sprite.spritecollide(p, inimigos, False, pygame.sprite.collide_mask):
-            p.take_damage(1)
-
-        # 2. Player toma dano (Tiros dos inimigos)
-        colisoes_tiro_inimigo = pygame.sprite.spritecollide(p, tiros_inimigos, True, pygame.sprite.collide_mask)
-        if colisoes_tiro_inimigo:
-            p.take_damage(1)
-
-        # 3. Player pega itens
-        colidiu = pygame.sprite.spritecollide(p, coletaveis, True, pygame.sprite.collide_mask)
-        for item in colidiu:
-            p.inventario[item.tipo] = p.inventario.get(item.tipo, 0) + 1
-            if item.tipo == "guarana" and player.sprite.vida < player.sprite.max_vida:
-                player.sprite.vida += 1
-
-        batidas_inimigo = pygame.sprite.groupcollide(bullet_group, inimigos, True, False, pygame.sprite.collide_mask)
-        if batidas_inimigo:
-            for lista_inimigos in batidas_inimigo.values():
-                for inimigo in lista_inimigos:
-                    inimigo.take_damage(1) 
-
-        player_rect = p.rect
+        
+        texto_titulo = fonte_menu.render("CINdio", True, (240, 248, 255))
+        texto_start = fonte_retry.render("Pressione ESPAÇO para Iniciar", True, "Yellow")
+        
+        screen.blit(texto_titulo, texto_titulo.get_rect(center=(640, 300)))
+        screen.blit(texto_start, texto_start.get_rect(center=(640, 450)))
+    
+    # jogo
     else:
-        player_rect = pygame.Rect(0,0,0,0)
+        p = player.sprite
 
-    # Atualizar grupos
-    bullet_group.update()
-    coletaveis.update()
-    tiros_inimigos.update()
-    for inimigo in inimigos:
-        inimigo.update(objetos_solidos, player_rect)
+        if p:
+            camera.update(p)
+            p.update()
+            
+            colisao(p, objetos_solidos, chao, parede) 
 
-    # --- DESENHO DO MUNDO ---
-    screen.blit(background.image, camera.aplicar_rect(background))
-    for sprite in objetos_solidos:
-        if sprite == chao:
-            chao_rect = camera.aplicar_rect(sprite)
-            chao_rect.y -= 20
-            screen.blit(sprite.image, chao_rect)
+            if pygame.sprite.spritecollide(p, inimigos, False, pygame.sprite.collide_mask):
+                p.take_damage(1)
+
+            colisoes_tiro_inimigo = pygame.sprite.spritecollide(p, tiros_inimigos, True, pygame.sprite.collide_mask)
+            if colisoes_tiro_inimigo:
+                p.take_damage(1)
+
+            colidiu = pygame.sprite.spritecollide(p, coletaveis, True, pygame.sprite.collide_mask)
+            for item in colidiu:
+                p.inventario[item.tipo] = p.inventario.get(item.tipo, 0) + 1
+                if item.tipo == "guarana" and player.sprite.vida < player.sprite.max_vida:
+                    player.sprite.vida += 1
+
+            batidas_inimigo = pygame.sprite.groupcollide(bullet_group, inimigos, True, False, pygame.sprite.collide_mask)
+            if batidas_inimigo:
+                for lista_inimigos in batidas_inimigo.values():
+                    for inimigo in lista_inimigos:
+                        inimigo.take_damage(1) 
+
+            player_rect = p.rect
         else:
+            player_rect = pygame.Rect(0,0,0,0)
+
+        # Atualizar grupos
+        bullet_group.update()
+        coletaveis.update()
+        tiros_inimigos.update()
+        for inimigo in inimigos:
+            inimigo.update(objetos_solidos, player_rect)
+
+        # --- DESENHO DO MUNDO ---
+        screen.blit(background.image, camera.aplicar_rect(background))
+        for sprite in objetos_solidos:
+            if sprite == chao:
+                chao_rect = camera.aplicar_rect(sprite)
+                chao_rect.y -= 20
+                screen.blit(sprite.image, chao_rect)
+            else:
+                screen.blit(sprite.image, camera.aplicar_rect(sprite))
+        for sprite in coletaveis:
             screen.blit(sprite.image, camera.aplicar_rect(sprite))
-    for sprite in coletaveis:
-        screen.blit(sprite.image, camera.aplicar_rect(sprite))
-    for sprite in bullet_group:
-        screen.blit(sprite.image, camera.aplicar_rect(sprite))
-    for inimigo in inimigos:
-        screen.blit(inimigo.image, camera.aplicar_rect(inimigo))
-    for bala in tiros_inimigos:
-        screen.blit(bala.image, camera.aplicar_rect(bala))
+        for sprite in bullet_group:
+            screen.blit(sprite.image, camera.aplicar_rect(sprite))
+        for inimigo in inimigos:
+            screen.blit(inimigo.image, camera.aplicar_rect(inimigo))
+        for bala in tiros_inimigos:
+            screen.blit(bala.image, camera.aplicar_rect(bala))
 
 
-    # Interface e Game Over
-    if p:
-        screen.blit(p.image, camera.aplicar_rect(p))
-        interface.display(screen, p.inventario, p.vida, p.max_vida)
-    else:
-        overlay = pygame.Surface((1280, 720))
-        overlay.set_alpha(150)
-        overlay.fill((30, 0, 0))
-        screen.blit(overlay, (0,0))
+        # Interface e Game Over
+        if p:
+            screen.blit(p.image, camera.aplicar_rect(p))
+            interface.display(screen, p.inventario, p.vida, p.max_vida)
+        else:
+            overlay = pygame.Surface((1280, 720))
+            overlay.set_alpha(150)
+            overlay.fill((30, 0, 0))
+            screen.blit(overlay, (0,0))
 
-        texto_morte = fonte_game_over.render("Voce Morreu", True, (255, 50, 50))
-        screen.blit(texto_morte, texto_morte.get_rect(center=(640, 320)))
+            texto_morte = fonte_game_over.render("Voce Morreu", True, (255, 50, 50))
+            screen.blit(texto_morte, texto_morte.get_rect(center=(640, 320)))
 
-        texto_r = fonte_retry.render("Aperte R para reiniciar", True, "White")
-        screen.blit(texto_r, texto_r.get_rect(center=(640, 420)))
+            texto_r = fonte_retry.render("Aperte R para reiniciar", True, "White")
+            screen.blit(texto_r, texto_r.get_rect(center=(640, 420)))
 
-        interface.display(screen, {}, 0, 12)
+            interface.display(screen, {}, 0, 12)
 
     pygame.display.update()
     clock.tick(60)

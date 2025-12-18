@@ -8,7 +8,7 @@ screen = pygame.display.set_mode((1280,720))
 pygame.display.set_caption('Jogo')
 clock = pygame.time.Clock()
 
-# --- NOVO: Variável de estado e Fonte para o Menu ---
+# NOVO: Variável de estado e Fonte para o menu
 em_jogo = False 
 fonte_menu = pygame.font.Font("assets/Fontes/WatercolorDemo.ttf", 50)
 

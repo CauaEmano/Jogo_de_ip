@@ -134,3 +134,27 @@ Abaixo estão listadas as tecnologias, bibliotecas e serviços utilizados no des
 | **Edição** | **Ezgif**                                                                                                                         | Utilizado para manipulação, conversão e otimização de sprites e GIFs animados.                           |
 | **Gestão** | <img src="https://img.shields.io/badge/Notion-000000?style=for-the-badge&logo=notion&logoColor=white" width="100px">              | Centralização da documentação, brainstorms e organização das tarefas (Kanban) da equipe.                 |
 |   **Git**  | <img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white" width="100px">              | Repositório central para versionamento de código e colaboração entre os membros.                         |
+
+
+## 🤝 Squad & Atribuições
+
+| Membro | Foco Principal | Contribuições Detalhadas |
+| :--- | :--- | :--- |
+| **Cauã** | ![Manager](https://img.shields.io/badge/Gestão_%26_Gameplay-blueviolet?style=flat-square) | Gerenciamento do projeto, roteiro, criação de inimigos menores, sistema de coletáveis (inventário) e colisões simples. |
+| **Marcos** | ![Core](https://img.shields.io/badge/Engine_%26_Level-blue?style=flat-square) | Núcleo do sistema, construção de cenário (chão/plataformas), Menu Principal e sistema de vida/dano. |
+| **João** | ![Player](https://img.shields.io/badge/Player_%26_Física-green?style=flat-square) | Desenvolvimento completo da classe `Player`, física de colisão, movimentação e polimento visual de assets. |
+| **Allanis** | ![Design](https://img.shields.io/badge/Lead_Design_%26_AI-ff69b4?style=flat-square) | Direção de arte/design principal e implementação da lógica do Sub-Boss. |
+| **Elane** | ![Creative](https://img.shields.io/badge/Story_%26_Boss-orange?style=flat-square) | Roteiro do jogo, desenvolvimento do Boss Principal e suporte na criação de sprites/design. |
+
+## 🧠 Conceitos Acadêmicos Aplicados
+
+Abaixo, detalhamos como os conceitos estudados na disciplina foram materializados no código do jogo.
+
+| Conceito | Aplicação Prática | Onde Encontrar (Exemplos) |
+| :--- | :--- | :--- |
+| **Programação Orientada a Objetos (POO)** | Todo o jogo é baseado em classes. O Player, Inimigos e o próprio Jogo são objetos com atributos (vida, velocidade) e métodos (andar, atacar). | `src/entities/player.py`<br>`src/core/game.py` |
+| **Herança** | Utilizamos classes base para criar variações. `Player` e `Enemy` herdam de uma classe `pygame.sprite.Sprite`. | `class Player(Entity): ...`<br>`class Enemy(Entity): ...` |
+| **Estruturas de Repetição (Loops)** | O "Game Loop" é o coração do projeto, mantendo o jogo rodando quadro a quadro enquanto a condição for verdadeira. | `while self.running:` em `main.py` |
+| **Estruturas de Dados (Listas/Grupos/Dicionários)** | Uso de Listas (ou Groups do Pygame) para gerenciar múltiplos inimigos, projéteis e plataformas simultaneamente. | `pygame.sprite.Group()`<br>`self.all_sprites` |
+| **Modularização** | Divisão do código em múltiplos arquivos e pastas para facilitar a manutenção e separar responsabilidades. | Pastas `src/core`, `src/world`, `src/entities` |
+| **Condicionais e Lógica Booleana** | Verificação de colisões (Se player toca no inimigo -> perde vida) e inputs de teclado. | `if event.type == QUIT:`<br>`if collision:` |

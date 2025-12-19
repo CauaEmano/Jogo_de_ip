@@ -195,7 +195,7 @@ while True:
                     ms_total = pygame.time.get_ticks() - tempo_inicio
                     mins = (ms_total // 60000)
                     segs = (ms_total // 1000) % 60
-                    tempo_final = (f"{mins:02f}:{segs:02f}")
+                    tempo_final = (f"{mins:02d}:{segs:02d}")
 
             player_rect = p.rect
         else:

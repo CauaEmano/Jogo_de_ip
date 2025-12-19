@@ -237,7 +237,11 @@ while True:
         if subboss.sprite:
             sub_rect = camera.aplicar_rect(subboss.sprite)
             if subboss.sprite.atacando:
-                sub_rect.x -= 50
+                if subboss.sprite.direction == -1:
+                    sub_rect.x -= 50
+                else:
+                    sub_rect.x -= 10
+
                 sub_rect.y -= 15
             screen.blit(subboss.sprite.image, aplicar_shake(sub_rect))
         

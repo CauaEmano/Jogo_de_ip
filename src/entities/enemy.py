@@ -275,8 +275,8 @@ class SubBoss(Inimigo):
     def update(self, objetos_solidos, player_rect):
         global ataque_timer, ataque_cooldown
 
-        self.hitbox.x = self.rect.x
-        self.hitbox.centery = self.rect.centery
+        self.hitbox.centerx = self.rect.centerx
+        self.hitbox.bottom = self.rect.bottom
 
         if not self.atacando: self.apply_gravity()
         self.handle_collisions(objetos_solidos)

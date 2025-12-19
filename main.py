@@ -33,6 +33,7 @@ objetos_solidos = pygame.sprite.Group()
 objetos_solidos_pedra = pygame.sprite.Group()
 chao = Chao()
 parede = Parede(x=-50, y=-100, largura=50, altura=700)
+paredef = Parede(x=15000, y=-100, largura=50, altura=700)
 plataformas = [
 Plataforma(x=1200, y=480, largura=120, altura=30),
 Plataforma(x=1450, y=400, largura=150, altura=30),
@@ -65,8 +66,8 @@ Plataforma(x=14150, y=400, largura=150, altura=30),
 Plataforma(x=14350, y=320, largura=150, altura=30),
 Plataforma(x=14600, y=400, largura=120, altura=30),
 Plataforma(x=14800, y=480, largura=120, altura=30),]
-objetos_solidos.add(chao, parede, plataformas)
-objetos_solidos_pedra.add(chao, parede)
+objetos_solidos.add(chao, parede, plataformas, paredef)
+objetos_solidos_pedra.add(chao, parede, paredef)
 
 # Coletáveis e Inimigos
 coletaveis = pygame.sprite.Group()
@@ -151,7 +152,7 @@ while True:
         if p:
             camera.update(p)
             p.update()
-            colisao(p, objetos_solidos, chao, parede) 
+            colisao(p, objetos_solidos, chao, parede, paredef) 
 
             # Colisões Inimigo/Player
             if pygame.sprite.spritecollide(p, inimigos, False, pygame.sprite.collide_mask):

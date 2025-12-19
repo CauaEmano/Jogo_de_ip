@@ -114,6 +114,8 @@ while True:
                 for lista_inimigos in batidas_inimigo.values():
                     for inimigo in lista_inimigos:
                         inimigo.take_damage(1) 
+                        
+            colisao_subboss(p, subboss.sprite)
 
             player_rect = p.rect
         else:
@@ -125,6 +127,8 @@ while True:
         tiros_inimigos.update()
         for inimigo in inimigos:
             inimigo.update(objetos_solidos, player_rect)
+        subboss.update(objetos_solidos, p)
+        
 
         # --- DESENHO DO MUNDO ---
         screen.blit(background.image, camera.aplicar_rect(background))
@@ -141,9 +145,17 @@ while True:
             screen.blit(sprite.image, camera.aplicar_rect(sprite))
         for inimigo in inimigos:
             screen.blit(inimigo.image, camera.aplicar_rect(inimigo))
+        
+        sub_rect = camera.aplicar_rect(subboss.sprite)
+        if subboss.sprite.atacando:
+            sub_rect.x -= 50
+            sub_rect.y -= 15
+        screen.blit(subboss.sprite.image, sub_rect)
+
         for bala in tiros_inimigos:
             screen.blit(bala.image, camera.aplicar_rect(bala))
 
+        # DEBUG: pygame.draw.rect(screen, "Red", subboss.sprite.hitbox, 5)
 
         # Interface e Game Over
         if p:

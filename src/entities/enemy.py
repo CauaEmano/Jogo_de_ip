@@ -243,28 +243,105 @@ class Capivara(Inimigo):
 
 class SubBoss(Inimigo):
     def __init__(self, pos_x, pos_y):
+        global ataque_timer, ataque_cooldown
         super().__init__(pos_x, pos_y, "assets/images/Inimigos/Subboss/subboss", 36, 120, 150, 15) 
         
         self.atual = 0
-        self.velocidade = 0.4 
+        self.velocidade = 4
         self.direction = -1
         self.is_flying = False
-        self.pos_x_float = float(pos_x)
+        self.atacando = False
+        self.hitbox = self.image.get_rect().scale_by(.6, 1)
+        self.hitbox.centery = self.rect.centery
 
-    def chase_player(self, player_rect):
-        distancia = player_rect.centerx - self.rect.centerx
+        self.sprites_ataque = []
+        for i in range(36):
+            imagem_a_salvar = pygame.image.load(f"assets/images/Inimigos/Subboss/subboss_atacando{i}.png").convert_alpha()
+            imagem_a_salvar = pygame.transform.scale_by(imagem_a_salvar, .55)
+            self.sprites_ataque.append(imagem_a_salvar)
+
+    def update(self, objetos_solidos, player):
+        global ataque_timer, ataque_cooldown
+
+        self.hitbox.x = self.rect.x
+        self.hitbox.centery = self.rect.centery
+
+        if not self.atacando: self.apply_gravity()
+        self.handle_collisions(objetos_solidos, player)
         
-        if abs(distancia) < 1000: # Visão maior
-            self.direction = 1 if distancia > 0 else -1
-            
-            # Movimentação usando FLOAT
-            self.pos_x_float += self.velocidade * self.direction
-            self.rect.x = int(self.pos_x_float) # Converte para inteiro só para desenhar
+        # Animação de corrida
+        self.atual += 0.25
+        if self.atual >= len(self.sprites):
+            self.atual = 0 
+        self.image = self.sprites[int(self.atual)]
 
-    def update(self, objetos_solidos=None, player_rect=None):
-        # Gravidade
-        super().update(objetos_solidos, player_rect)
+        # Perseguição
+        AGGRO_RANGE = 600
+        distance = player.rect.centerx - self.rect.centerx
+        ataque_cooldown -= 1 if ataque_cooldown > 0 and not self.atacando else 0
 
-        if player_rect:
-            self.chase_player(player_rect)
+        if not self.atacando and ataque_cooldown <= 8:
+            if abs(distance) < AGGRO_RANGE:
+                perto = -60 < distance and distance < 60
+                if perto:
+                    self.velocidade = 2
+                elif distance > 0:
+                    self.velocidade = 4
+                    self.direction = 1 # Player está à direita
+                elif distance < 0:
+                    self.velocidade = 4
+                    self.direction = -1 # Player está à esquerda
+            else:
+                self.direction = 0 # Parar se estiver fora do alcance
+
+        # Ataque
+        if self.atacando:
+            self.atual += .1
+            if self.atual >= len(self.sprites_ataque):
+                self.atual = 0 
+                self.atacando = False
+                ataque_timer = 0
         
+            ataque_timer += 1
+            self.image = self.sprites_ataque[int(self.atual)]
+        
+        alcancavel = -80 < distance and distance < 80 and self.rect.centery - player.rect.centery < 60 and self.rect.centery - player.rect.centery > -60
+        if alcancavel and not self.atacando and ataque_cooldown == 0:
+            self.atual = 0
+            self.atacando = True
+
+        if not self.atacando: # Deslocamento padrão
+            self.rect.x += self.velocidade * self.direction
+
+        self.image = pygame.transform.flip(self.image, True, False) if self.direction == 1 else self.image
+
+    def handle_collisions(self, objetos_solidos, player):
+        self.no_chao = False
+        
+        colisoes = [objeto for objeto in objetos_solidos if self.hitbox.colliderect(objeto.hitbox)]
+        colidiu_player = self.hitbox.colliderect(player.hitbox)
+
+        if colisoes:
+            print(colisoes)
+            for objeto in colisoes:
+                if objeto.rect.left < 0:
+                    if self.direction > 0: 
+                        self.rect.right = objeto.hitbox.left + 5
+                        self.hitbox.right = self.rect.right
+                    elif self.direction < 0: 
+                        self.rect.left = objeto.hitbox.right - 5
+                        self.hitbox.left = self.rect.left
+                
+                if objeto.rect.top >= 600:
+                    self.rect.bottom = objeto.rect.top
+                    self.hitbox.bottom = self.rect.bottom
+                    self.no_chao = True
+                    self.vel_y = 0
+
+        if colidiu_player:
+            if self.direction > 0: 
+                self.rect.right = player.hitbox.left - 2
+                self.hitbox.right = self.rect.right
+            elif self.direction < 0: 
+                self.rect.left = player.hitbox.right + 2
+                self.hitbox.left = self.rect.left

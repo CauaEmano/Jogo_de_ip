@@ -8,20 +8,26 @@ pygame.init()
 pygame.mixer.init()
 
 screen = pygame.display.set_mode((1280,720))
-pygame.display.set_caption('Jogo')
+pygame.display.set_caption('Helicônia')
 clock = pygame.time.Clock()
 
-# NOVO: Variável de estado e Fonte para o menu
+# ESTADOS DO JOGO E FONTES
 em_jogo = False 
+venceu = False
+tempo_inicio = 0
+tempo_final = ""
+
 fonte_menu = pygame.font.Font("assets/Fontes/WatercolorDemo.ttf", 50)
+fonte_vitoria = pygame.font.Font("assets/Fontes/WatercolorDemo.ttf", 30)
+fonte_game_over = pygame.font.Font("assets/Fontes/WatercolorDemo.ttf", 30)
+fonte_retry = pygame.font.Font("assets/Fontes/WatercolorDemo.ttf", 20)
 
 # Objeto do player
 player = pygame.sprite.GroupSingle()
 player.add(Player())
-
 bullet_group = pygame.sprite.Group()
 
-# Objetos do mundo
+# Objetos do mundo (Plataformas e Colisões)
 objetos_solidos = pygame.sprite.Group()
 objetos_solidos_pedra = pygame.sprite.Group()
 chao = Chao()
@@ -61,35 +67,27 @@ Plataforma(x=14800, y=480, largura=120, altura=30),]
 objetos_solidos.add(chao, parede, plataformas)
 objetos_solidos_pedra.add(chao, parede)
 
-#Coletáveis
+# Coletáveis e Inimigos
 coletaveis = pygame.sprite.Group()
-
-#Inimigos
 inimigos = pygame.sprite.Group()
 tiros_inimigos = pygame.sprite.Group()
 subboss = pygame.sprite.GroupSingle()
-boszinho = SubBoss(pos_x=14500, pos_y=600)
-subboss.add(boszinho)
-inimigos.add(boszinho)
 
-player, bullet_group, tiros_inimigos, inimigos, coletaveis, subboss = carregar_nivel(player, bullet_group, tiros_inimigos, inimigos, coletaveis,subboss)
+# Carregar nível e Câmera
+player, bullet_group, tiros_inimigos, inimigos, coletaveis, subboss = carregar_nivel(player, bullet_group, tiros_inimigos, inimigos, coletaveis, subboss)
 interface = UI()
-
 camera = Camera(1280, 720, 15000, 720)
-
-fonte_game_over = pygame.font.Font("assets/Fontes/WatercolorDemo.ttf", 30)
-fonte_retry = pygame.font.Font("assets/Fontes/WatercolorDemo.ttf", 20)
-
 background = Background()
-subboss_spawnado = False
+
+# Variáveis de Boss e Efeitos
+subboss_spawnado = True # Definido como True para detectar vitória quando ele morrer
+shake_timer = 0
 
 pygame.mixer.music.load('assets/audios/floresta.wav')
 pygame.mixer.music.play(-1)
 pygame.mixer.music.set_volume(0.1)
 
-shake_timer = 0
-
-# Loop principal
+# --- LOOP PRINCIPAL ---
 while True:
     shake_x = 0
     shake_y = 0
@@ -104,77 +102,106 @@ while True:
             exit()
 
         if event.type == pygame.KEYDOWN:
-            # --- NOVO: Iniciar o jogo ao apertar Espaço ou Enter ---
-            if not em_jogo:
+            # INICIAR JOGO
+            if not em_jogo and not venceu:
                 if event.key == pygame.K_SPACE or event.key == pygame.K_RETURN:
                     em_jogo = True
+                    tempo_inicio = pygame.time.get_ticks() # Começa a contar
             
-            # Sua lógica original de tiro e restart
-            elif event.key == pygame.K_SPACE and player.sprite:
+            # ATIRAR
+            elif em_jogo and event.key == pygame.K_SPACE and player.sprite:
                 player.sprite.shoot(bullet_group, objetos_solidos_pedra, coletaveis, Pedra)
             
-            if not player.sprite and event.key == pygame.K_r:
-                player, bullet_group, tiros_inimigos, inimigos, coletaveis, subboss = carregar_nivel(player, bullet_group, tiros_inimigos, inimigos, coletaveis,subboss)
+            # REINICIAR (Morte ou Vitória)
+            if (not player.sprite or venceu) and event.key == pygame.K_r:
+                player, bullet_group, tiros_inimigos, inimigos, coletaveis, subboss = carregar_nivel(player, bullet_group, tiros_inimigos, inimigos, coletaveis, subboss)
+                em_jogo = True
+                venceu = False
+                subboss_spawnado = True
                 shake_timer = 0
-    
-    # tela inicial
-    if not em_jogo:
+                tempo_inicio = pygame.time.get_ticks() # Reseta o tempo
+
+    # DESENHO E TELAS 
+
+    # TELA DE VITÓRIA
+    if venceu:
         screen.blit(background.image, (0,0)) 
         screen.blit(chao.image, (0,580))
+        texto_v = fonte_vitoria.render("VOCÊ VENCEU!", True, "Gold")
+        texto_t = fonte_vitoria.render(f"Tempo: {tempo_final}", True, "White")
+        texto_r = fonte_retry.render("Pressione R para jogar novamente", True, "Yellow")
         
-        
-        texto_titulo = fonte_menu.render("Helicônia", True, (240, 248, 255))
+        screen.blit(texto_v, texto_v.get_rect(center=(640, 250)))
+        screen.blit(texto_t, texto_t.get_rect(center=(640, 380)))
+        screen.blit(texto_r, texto_r.get_rect(center=(640, 520)))
+
+    # TELA INICIAL
+    elif not em_jogo:
+        screen.blit(background.image, (0,0)) 
+        screen.blit(chao.image, (0,580))
+        texto_titulo = fonte_menu.render("Ecos de Aranãmi", True, (240, 248, 255))
         texto_start = fonte_retry.render("Pressione ESPAÇO para Iniciar", True, "Yellow")
-        
         screen.blit(texto_titulo, texto_titulo.get_rect(center=(640, 300)))
         screen.blit(texto_start, texto_start.get_rect(center=(640, 450)))
     
-    # jogo
+    # JOGO ATIVO
     else:
         p = player.sprite
-
         if p:
             camera.update(p)
             p.update()
-            
             colisao(p, objetos_solidos, chao, parede) 
 
+            # Colisões Inimigo/Player
             if pygame.sprite.spritecollide(p, inimigos, False, pygame.sprite.collide_mask):
                 p.take_damage(1)
-
-            colisoes_tiro_inimigo = pygame.sprite.spritecollide(p, tiros_inimigos, True, pygame.sprite.collide_mask)
-            if colisoes_tiro_inimigo:
+            if pygame.sprite.spritecollide(p, tiros_inimigos, True, pygame.sprite.collide_mask):
                 p.take_damage(1)
 
+            # Itens e Tiro do Player
             colidiu = [objeto for objeto in coletaveis if p.hitbox.colliderect(objeto.rect)]
             for item in colidiu:
                 item.kill()
                 p.inventario[item.tipo] = p.inventario.get(item.tipo, 0) + 1
-                if item.tipo == "guarana" and player.sprite.vida < player.sprite.max_vida:
-                    player.sprite.vida += 1
+                if item.tipo == "guarana" and p.vida < p.max_vida:
+                    p.vida += 1
 
             batidas_inimigo = pygame.sprite.groupcollide(bullet_group, inimigos, True, False, pygame.sprite.collide_mask)
             if batidas_inimigo:
-                for lista_inimigos in batidas_inimigo.values():
-                    for inimigo in lista_inimigos:
+                for lista in batidas_inimigo.values():
+                    for inimigo in lista:
                         inimigo.take_damage(1) 
-                        
+            
+            # LÓGICA DO BOSS
             if subboss.sprite:
                 colisao_subboss(p, subboss.sprite)
+                # Efeito de quase morte
                 if subboss.sprite.vida <= 5:
-                    if not subboss.sprite.ja_gritou:
+                    if not getattr(subboss.sprite, 'ja_gritou', False):
                         subboss.sprite.ja_gritou = True
-                        if subboss.sprite.som_grito:
+                        if hasattr(subboss.sprite, 'som_grito') and subboss.sprite.som_grito:
                             subboss.sprite.som_grito.play()
                         shake_timer = 90
                     for plat in plataformas:
                         plat.caindo = True
+                player_rect = p.rect
+            else:
+                # CONDIÇÃO DE VITÓRIA: Boss morreu e o grupo está vazio
+                if subboss_spawnado:
+                    venceu = True
+                    em_jogo = False
+                    subboss_spawnado = False
+                    # Calcular tempo final
+                    ms_total = pygame.time.get_ticks() - tempo_inicio
+                    mins = (ms_total // 60000)
+                    segs = (ms_total // 1000) % 60
+                    tempo_final = (f"{mins:02f}:{segs:02f}")
 
             player_rect = p.rect
         else:
             player_rect = pygame.Rect(0,0,0,0)
 
-        # Atualizar grupos
+        # Atualizar Grupos
         bullet_group.update()
         coletaveis.update()
         tiros_inimigos.update()
@@ -182,59 +209,50 @@ while True:
             inimigo.update(objetos_solidos, player_rect)
         objetos_solidos.update()
 
-        # --- DESENHO DO MUNDO ---
-
+        # --- RENDERIZAÇÃO DO MUNDO ---
         def aplicar_shake(rect):
-            rect.x += shake_x
-            rect.y += shake_y
-            return rect
+            r = rect.copy()
+            r.x += shake_x
+            r.y += shake_y
+            return r
 
         screen.blit(background.image, aplicar_shake(camera.aplicar_rect(background)))
+        
         for sprite in objetos_solidos:
             if sprite == chao:
                 chao_rect = camera.aplicar_rect(sprite)
                 chao_rect.y -= 20
-                screen.blit(sprite.image, chao_rect)
+                screen.blit(sprite.image, aplicar_shake(chao_rect))
             else:
-                screen.blit(sprite.image, camera.aplicar_rect(sprite))
-        for sprite in coletaveis:
-            screen.blit(sprite.image, camera.aplicar_rect(sprite))
-        for sprite in bullet_group:
-            screen.blit(sprite.image, camera.aplicar_rect(sprite))
-        for inimigo in inimigos:
-            if inimigo == subboss.sprite:
-                continue
-            screen.blit(inimigo.image, camera.aplicar_rect(inimigo))
+                screen.blit(sprite.image, aplicar_shake(camera.aplicar_rect(sprite)))
+
+        for sprite in coletaveis: screen.blit(sprite.image, aplicar_shake(camera.aplicar_rect(sprite)))
+        for sprite in bullet_group: screen.blit(sprite.image, aplicar_shake(camera.aplicar_rect(sprite)))
         
-        if subboss.sprite: # Verificação de segurança caso ele morra
+        for inimigo in inimigos:
+            if inimigo != subboss.sprite:
+                screen.blit(inimigo.image, aplicar_shake(camera.aplicar_rect(inimigo)))
+        
+        if subboss.sprite:
             sub_rect = camera.aplicar_rect(subboss.sprite)
             if subboss.sprite.atacando:
                 sub_rect.x -= 50
                 sub_rect.y -= 15
-            screen.blit(subboss.sprite.image, sub_rect)
+            screen.blit(subboss.sprite.image, aplicar_shake(sub_rect))
         
-        for bala in tiros_inimigos:
-            screen.blit(bala.image, camera.aplicar_rect(bala))
+        for bala in tiros_inimigos: screen.blit(bala.image, aplicar_shake(camera.aplicar_rect(bala)))
 
-        # DEBUG: pygame.draw.rect(screen, "Red", subboss.sprite.hitbox, 5)
-
-        # Interface e Game Over
         if p:
-            screen.blit(p.image, camera.aplicar_rect(p))
+            screen.blit(p.image, aplicar_shake(camera.aplicar_rect(p)))
             interface.display(screen, p.inventario, p.vida, p.max_vida)
         else:
+            # GAME OVER OVERLAY
             overlay = pygame.Surface((1280, 720))
             overlay.set_alpha(150)
             overlay.fill((30, 0, 0))
             screen.blit(overlay, (0,0))
-
-            texto_morte = fonte_game_over.render("Voce Morreu", True, (255, 50, 50))
-            screen.blit(texto_morte, texto_morte.get_rect(center=(640, 320)))
-
-            texto_r = fonte_retry.render("Aperte R para reiniciar", True, "White")
-            screen.blit(texto_r, texto_r.get_rect(center=(640, 420)))
-
-            interface.display(screen, {}, 0, 12)
+            screen.blit(fonte_game_over.render("Você Morreu", True, (255, 50, 50)), (520, 320))
+            screen.blit(fonte_retry.render("Aperte R para reiniciar", True, "White"), (530, 420))
 
     pygame.display.update()
     clock.tick(60)

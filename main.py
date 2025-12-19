@@ -17,6 +17,9 @@ fonte_menu = pygame.font.Font("assets/Fontes/WatercolorDemo.ttf", 50)
 # Objeto do player
 player = pygame.sprite.GroupSingle()
 player.add(Player())
+subboss = pygame.sprite.GroupSingle()
+boszinho = SubBoss(pos_x=500, pos_y=600)
+subboss.add(boszinho)
 
 bullet_group = pygame.sprite.Group()
 
@@ -88,6 +91,7 @@ while True:
     # jogo
     else:
         p = player.sprite
+        s = subboss.sprite
 
         if p:
             camera.update(p)
@@ -125,6 +129,7 @@ while True:
         tiros_inimigos.update()
         for inimigo in inimigos:
             inimigo.update(objetos_solidos, player_rect)
+        subboss.update(objetos_solidos, player_rect)
 
         # --- DESENHO DO MUNDO ---
         screen.blit(background.image, camera.aplicar_rect(background))
@@ -141,6 +146,7 @@ while True:
             screen.blit(sprite.image, camera.aplicar_rect(sprite))
         for inimigo in inimigos:
             screen.blit(inimigo.image, camera.aplicar_rect(inimigo))
+        screen.blit(subboss.sprite.image, camera.aplicar_rect(subboss.sprite))
         for bala in tiros_inimigos:
             screen.blit(bala.image, camera.aplicar_rect(bala))
 

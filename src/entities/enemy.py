@@ -243,28 +243,82 @@ class Capivara(Inimigo):
 
 class SubBoss(Inimigo):
     def __init__(self, pos_x, pos_y):
+        global ataque_timer, ataque_cooldown
         super().__init__(pos_x, pos_y, "assets/images/Inimigos/Subboss/subboss", 36, 120, 150, 15) 
         
         self.atual = 0
-        self.velocidade = 0.4 
+        self.velocidade = 4
         self.direction = -1
         self.is_flying = False
-        self.pos_x_float = float(pos_x)
+        self.atacando = False
+        self.hitbox = self.image.get_rect().scale_by(.6, .8)
+        self.hitbox.centery = self.rect.centery
 
-    def chase_player(self, player_rect):
-        distancia = player_rect.centerx - self.rect.centerx
+        self.sprites_ataque = []
+        for i in range(36):
+            imagem_a_salvar = pygame.image.load(f"assets/images/Inimigos/Subboss/subboss_atacando{i}.png").convert_alpha()
+            imagem_a_salvar = pygame.transform.scale_by(imagem_a_salvar, .55)
+            self.sprites_ataque.append(imagem_a_salvar)
+
+    def update(self, objetos_solidos, player_rect):
+        global ataque_timer, ataque_cooldown
+
+        self.hitbox.x = self.rect.x
         
-        if abs(distancia) < 1000: # Visão maior
-            self.direction = 1 if distancia > 0 else -1
-            
-            # Movimentação usando FLOAT
-            self.pos_x_float += self.velocidade * self.direction
-            self.rect.x = int(self.pos_x_float) # Converte para inteiro só para desenhar
 
-    def update(self, objetos_solidos=None, player_rect=None):
-        # Gravidade
-        super().update(objetos_solidos, player_rect)
-
-        if player_rect:
-            self.chase_player(player_rect)
+        if objetos_solidos is not None and not self.is_flying:
+            if not self.atacando: self.apply_gravity()
+            self.handle_collisions(objetos_solidos)
         
+        # Animação de corrida
+        self.atual += 0.25
+        if self.atual >= len(self.sprites):
+            self.atual = 0 
+        self.image = self.sprites[int(self.atual)]
+
+        # Perseguição
+        AGGRO_RANGE = 600
+        distance = player_rect.centerx - self.rect.centerx
+        ataque_cooldown -= 1 if ataque_cooldown > 0 and not self.atacando else 0
+
+        if not self.atacando and ataque_cooldown <= 8:
+            if abs(distance) < AGGRO_RANGE:
+                perto = -60 < distance and distance < 60
+                if perto:
+                    self.velocidade = 2
+                elif distance > 0:
+                    self.velocidade = 4
+                    self.direction = 1 # Player está à direita
+                elif distance < 0:
+                    self.velocidade = 4
+                    self.direction = -1 # Player está à esquerda
+            else:
+                self.direction = 0 # Parar se estiver fora do alcance
+
+        # Ataque
+        if self.atacando:
+            self.atual += .1
+            if self.atual >= len(self.sprites_ataque):
+                self.atual = 0 
+                self.atacando = False
+                ataque_timer = 0
+        
+            ataque_timer += 1
+            self.image = self.sprites_ataque[int(self.atual)]
+        
+        alcancavel = -80 < distance and distance < 80 and (self.rect.centery - player_rect.centery < 50 and self.rect.centery - player_rect.centery > -50)
+        if alcancavel and not self.atacando and self.no_chao and ataque_cooldown == 0:
+            self.atual = 0
+            self.atacando = True
+
+        if self.atacando: # Deslocamento durante ataque
+            if ataque_timer >= 15:
+                ataque_cooldown = 100
+                # self.rect.x += 17.5 * self.direction
+                # self.rect.y -= 2
+                # if ataque_timer > 35:
+                #     self.rect.y += 5.2
+        elif ataque_cooldown <= 8: # Deslocamento padrão
+            self.rect.x += self.velocidade * self.direction
+
+        self.image = pygame.transform.flip(self.image, True, False) if self.direction == 1 else self.image

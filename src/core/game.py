@@ -31,10 +31,10 @@ def carregar_nivel(player, bullet_group, tiros_inimigos, inimigos, coletaveis):
     
     # Recria os inimigos e itens
     #zona1
-    capivara0 = Capivara(pos_x=800, pos_y=600, vida=1, grupo_tiros=tiros_inimigos)
-    capivara1 = Capivara(pos_x=1500, pos_y=600, vida=1, grupo_tiros=tiros_inimigos)
-    capivara2 = Capivara(pos_x=2000, pos_y=600, vida=1, grupo_tiros=tiros_inimigos)
-    inimigos.add(capivara0, capivara1, capivara2)
+    # capivara0 = Capivara(pos_x=800, pos_y=600, vida=1, grupo_tiros=tiros_inimigos)
+    # capivara1 = Capivara(pos_x=1500, pos_y=600, vida=1, grupo_tiros=tiros_inimigos)
+    # capivara2 = Capivara(pos_x=2000, pos_y=600, vida=1, grupo_tiros=tiros_inimigos)
+    # inimigos.add(capivara0, capivara1, capivara2)
     
     #zona 2
     tucano1 = Tucano(pos_x=2500, pos_y=400, velocidade=3, vida=1, grupo_tiros=tiros_inimigos)

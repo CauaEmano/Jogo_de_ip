@@ -119,7 +119,7 @@ while True:
                     for inimigo in lista_inimigos:
                         inimigo.take_damage(1) 
                         
-            colisao_subboss(p, subboss)
+            colisao_subboss(p, subboss.sprite)
 
             player_rect = p.rect
         else:
@@ -148,7 +148,13 @@ while True:
             screen.blit(sprite.image, camera.aplicar_rect(sprite))
         for inimigo in inimigos:
             screen.blit(inimigo.image, camera.aplicar_rect(inimigo))
-        screen.blit(subboss.sprite.image, camera.aplicar_rect(subboss.sprite))
+        
+        sub_rect = camera.aplicar_rect(subboss.sprite)
+        if subboss.sprite.atacando:
+            sub_rect.x -= 50
+            sub_rect.y -= 15
+        screen.blit(subboss.sprite.image, sub_rect)
+
         for bala in tiros_inimigos:
             screen.blit(bala.image, camera.aplicar_rect(bala))
 

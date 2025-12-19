@@ -115,6 +115,8 @@ class Onca(Inimigo):
         self.direction = -1 # Direção inicial de movimento
         self.is_flying = False
         self.atacando = False
+        self.som_ataque = pygame.mixer.Sound('assets/audios/onca.wav') 
+        self.som_ataque.set_volume(0.4)
         ataque_timer = 0
         ataque_cooldown = 0
 
@@ -172,6 +174,8 @@ class Onca(Inimigo):
         if alcancavel and not self.atacando and self.no_chao and ataque_cooldown == 0:
             self.atual = 0
             self.atacando = True
+            if self.som_ataque:
+                self.som_ataque.play()
 
         if self.atacando: # Deslocamento durante ataque
             if ataque_timer >= 15:
@@ -195,6 +199,8 @@ class Tucano(Inimigo):
         self.cooldown = 0
         self.max_cooldown = 50
         self.is_flying = True
+        self.som_tiro = pygame.mixer.Sound('assets/audios/tucano.ogg')
+        self.som_tiro.set_volume(0.3)
         
     def update(self, objetos_solidos=None, player_rect=None):
         self.cooldown += 1
@@ -208,6 +214,8 @@ class Tucano(Inimigo):
             self.cooldown = 0
             bomba = Projetil(self.rect.centerx, self.rect.centery + 20, 0, 0, 1) 
             self.grupo_tiros.add(bomba)
+            if self.som_tiro:
+                self.som_tiro.play()
         
         super().update(objetos_solidos, player_rect)
         self.rect.x += self.velocidade * self.direction
@@ -243,7 +251,7 @@ class Capivara(Inimigo):
 class SubBoss(Inimigo):
     def __init__(self, pos_x, pos_y):
         global ataque_timer, ataque_cooldown
-        super().__init__(pos_x, pos_y, "assets/images/Inimigos/Subboss/subboss", 36, 120, 150, 1) 
+        super().__init__(pos_x, pos_y, "assets/images/Inimigos/Subboss/subboss", 36, 120, 150, 10) 
         
         self.atual = 0
         self.velocidade = 4

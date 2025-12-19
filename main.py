@@ -43,7 +43,7 @@ coletaveis = pygame.sprite.Group()
 inimigos = pygame.sprite.Group()
 tiros_inimigos = pygame.sprite.Group()
 subboss = pygame.sprite.GroupSingle()
-boszinho = SubBoss(pos_x=500, pos_y=600)
+boszinho = SubBoss(pos_x=14500, pos_y=600)
 subboss.add(boszinho)
 inimigos.add(boszinho)
 

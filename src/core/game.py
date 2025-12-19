@@ -13,15 +13,10 @@ def gerar_itens(coletaveis, Item, quantidade, y=600):
         coletaveis.add(item)
         z += f
 
-def carregar_nivel(player, bullet_group, tiros_inimigos, inimigos, coletaveis):
+def carregar_nivel(player, bullet_group, tiros_inimigos, inimigos, coletaveis, subboss):
     # Reset do Player
     player = pygame.sprite.GroupSingle()
     player.add(Player())
-
-    #zona final
-    subboss = pygame.sprite.GroupSingle()
-    boszinho = SubBoss(pos_x=500, pos_y=600)
-    subboss.add(boszinho)
     
     # Limpa grupos
     bullet_group.empty()
@@ -54,8 +49,14 @@ def carregar_nivel(player, bullet_group, tiros_inimigos, inimigos, coletaveis):
     tucano5 = Tucano(pos_x=11000, pos_y=400, velocidade=3, vida=1, grupo_tiros=tiros_inimigos)
     inimigos.add(onca2, onca3, onca4, capivara4, capivara5, tucano3, tucano4, tucano5)
 
+    #zona final
+    subboss = pygame.sprite.GroupSingle()
+    boszinho = SubBoss(pos_x=500, pos_y=600)
+    subboss.add(boszinho)
+    inimigos.add(boszinho)
+
     gerar_itens(coletaveis, Guarana, 8)
     gerar_itens(coletaveis, Pedra, 30)
     gerar_itens(coletaveis, Pipa, 1, 450)
 
-    return player, bullet_group, tiros_inimigos, inimigos, coletaveis
+    return player, bullet_group, tiros_inimigos, inimigos, coletaveis, subboss

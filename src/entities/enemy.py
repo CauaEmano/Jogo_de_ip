@@ -215,7 +215,6 @@ class Tucano(Inimigo):
 
 class Capivara(Inimigo):
     def __init__(self, pos_x, pos_y, vida, grupo_tiros):
-       
         super().__init__(pos_x, pos_y, "assets/images/Inimigos/animais/capivara", 36, 60, 60, vida)
         self.grupo_tiros = grupo_tiros
         self.cooldown = 0
@@ -244,7 +243,7 @@ class Capivara(Inimigo):
 class SubBoss(Inimigo):
     def __init__(self, pos_x, pos_y):
         global ataque_timer, ataque_cooldown
-        super().__init__(pos_x, pos_y, "assets/images/Inimigos/Subboss/subboss", 36, 120, 150, 15) 
+        super().__init__(pos_x, pos_y, "assets/images/Inimigos/Subboss/subboss", 36, 120, 150, 1) 
         
         self.atual = 0
         self.velocidade = 4
@@ -260,14 +259,14 @@ class SubBoss(Inimigo):
             imagem_a_salvar = pygame.transform.scale_by(imagem_a_salvar, .55)
             self.sprites_ataque.append(imagem_a_salvar)
 
-    def update(self, objetos_solidos, player):
+    def update(self, objetos_solidos, player_rect):
         global ataque_timer, ataque_cooldown
 
         self.hitbox.x = self.rect.x
         self.hitbox.centery = self.rect.centery
 
         if not self.atacando: self.apply_gravity()
-        self.handle_collisions(objetos_solidos, player)
+        self.handle_collisions(objetos_solidos)
         
         # Animação de corrida
         self.atual += 0.25
@@ -277,7 +276,7 @@ class SubBoss(Inimigo):
 
         # Perseguição
         AGGRO_RANGE = 600
-        distance = player.rect.centerx - self.rect.centerx
+        distance = player_rect.centerx - self.rect.centerx
         ataque_cooldown -= 1 if ataque_cooldown > 0 and not self.atacando else 0
 
         if not self.atacando and ataque_cooldown <= 8:
@@ -305,7 +304,7 @@ class SubBoss(Inimigo):
             ataque_timer += 1
             self.image = self.sprites_ataque[int(self.atual)]
         
-        alcancavel = -80 < distance and distance < 80 and self.rect.centery - player.rect.centery < 60 and self.rect.centery - player.rect.centery > -60
+        alcancavel = -80 < distance and distance < 80 and self.rect.centery - player_rect.centery < 60 and self.rect.centery - player_rect.centery > -60
         if alcancavel and not self.atacando and ataque_cooldown == 0:
             self.atual = 0
             self.atacando = True
@@ -315,14 +314,12 @@ class SubBoss(Inimigo):
 
         self.image = pygame.transform.flip(self.image, True, False) if self.direction == 1 else self.image
 
-    def handle_collisions(self, objetos_solidos, player):
+    def handle_collisions(self, objetos_solidos):
         self.no_chao = False
         
         colisoes = [objeto for objeto in objetos_solidos if self.hitbox.colliderect(objeto.hitbox)]
-        colidiu_player = self.hitbox.colliderect(player.hitbox)
 
         if colisoes:
-            print(colisoes)
             for objeto in colisoes:
                 if objeto.rect.left < 0:
                     if self.direction > 0: 
@@ -337,11 +334,3 @@ class SubBoss(Inimigo):
                     self.hitbox.bottom = self.rect.bottom
                     self.no_chao = True
                     self.vel_y = 0
-
-        if colidiu_player:
-            if self.direction > 0: 
-                self.rect.right = player.hitbox.left - 2
-                self.hitbox.right = self.rect.right
-            elif self.direction < 0: 
-                self.rect.left = player.hitbox.right + 2
-                self.hitbox.left = self.rect.left

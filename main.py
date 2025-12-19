@@ -42,8 +42,12 @@ coletaveis = pygame.sprite.Group()
 #Inimigos
 inimigos = pygame.sprite.Group()
 tiros_inimigos = pygame.sprite.Group()
+subboss = pygame.sprite.GroupSingle()
+boszinho = SubBoss(pos_x=500, pos_y=600)
+subboss.add(boszinho)
+inimigos.add(boszinho)
 
-player, bullet_group, tiros_inimigos, inimigos, coletaveis = carregar_nivel(player, bullet_group, tiros_inimigos, inimigos, coletaveis)
+player, bullet_group, tiros_inimigos, inimigos, coletaveis, subboss = carregar_nivel(player, bullet_group, tiros_inimigos, inimigos, coletaveis,subboss)
 interface = UI()
 
 camera = Camera(1280, 720, 15000, 720)
@@ -53,6 +57,11 @@ fonte_retry = pygame.font.Font("assets/Fontes/WatercolorDemo.ttf", 20)
 
 background = Background()
 subboss_spawnado = False
+
+pygame.mixer.music.load('assets/audios/floresta.wav')
+pygame.mixer.music.play(-1)
+pygame.mixer.music.set_volume(0.1)
+
 # Loop principal
 while True:
     for event in pygame.event.get():
@@ -71,7 +80,7 @@ while True:
                 player.sprite.shoot(bullet_group, objetos_solidos_pedra, coletaveis, Pedra)
             
             if not player.sprite and event.key == pygame.K_r:
-                player, bullet_group, tiros_inimigos, inimigos, coletaveis = carregar_nivel(player, bullet_group, tiros_inimigos, inimigos, coletaveis)
+                player, bullet_group, tiros_inimigos, inimigos, coletaveis, subboss = carregar_nivel(player, bullet_group, tiros_inimigos, inimigos, coletaveis,subboss)
     
     # tela inicial
     if not em_jogo:
@@ -115,7 +124,8 @@ while True:
                     for inimigo in lista_inimigos:
                         inimigo.take_damage(1) 
                         
-            colisao_subboss(p, subboss.sprite)
+            if subboss.sprite:
+                colisao_subboss(p, subboss.sprite)
 
             player_rect = p.rect
         else:
@@ -127,8 +137,6 @@ while True:
         tiros_inimigos.update()
         for inimigo in inimigos:
             inimigo.update(objetos_solidos, player_rect)
-        subboss.update(objetos_solidos, p)
-        
 
         # --- DESENHO DO MUNDO ---
         screen.blit(background.image, camera.aplicar_rect(background))
@@ -144,14 +152,17 @@ while True:
         for sprite in bullet_group:
             screen.blit(sprite.image, camera.aplicar_rect(sprite))
         for inimigo in inimigos:
+            if inimigo == subboss.sprite:
+                continue
             screen.blit(inimigo.image, camera.aplicar_rect(inimigo))
         
-        sub_rect = camera.aplicar_rect(subboss.sprite)
-        if subboss.sprite.atacando:
-            sub_rect.x -= 50
-            sub_rect.y -= 15
-        screen.blit(subboss.sprite.image, sub_rect)
-
+        if subboss.sprite: # Verificação de segurança caso ele morra
+            sub_rect = camera.aplicar_rect(subboss.sprite)
+            if subboss.sprite.atacando:
+                sub_rect.x -= 50
+                sub_rect.y -= 15
+            screen.blit(subboss.sprite.image, sub_rect)
+        
         for bala in tiros_inimigos:
             screen.blit(bala.image, camera.aplicar_rect(bala))
 

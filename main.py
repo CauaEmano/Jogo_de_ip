@@ -118,6 +118,8 @@ while True:
                 for lista_inimigos in batidas_inimigo.values():
                     for inimigo in lista_inimigos:
                         inimigo.take_damage(1) 
+                        
+            colisao_subboss(p, subboss)
 
             player_rect = p.rect
         else:

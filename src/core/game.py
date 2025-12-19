@@ -20,7 +20,8 @@ def carregar_nivel(player, bullet_group, tiros_inimigos, inimigos, coletaveis):
 
     #zona final
     subboss = pygame.sprite.GroupSingle()
-    subboss.add(SubBoss(pos_x=500, pos_y=600))
+    boszinho = SubBoss(pos_x=500, pos_y=600)
+    subboss.add(boszinho)
     
     # Limpa grupos
     bullet_group.empty()

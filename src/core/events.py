@@ -24,3 +24,14 @@ def colisao(player, solidos, chao, parede):
                 
                 player.vel_y = 0
                 player.no_ar = False
+
+def colisao_subboss(player, subboss):
+    
+    colisoes = player.hitbox.colliderect(subboss.sprite.rect)
+    if colisoes:
+        if player.vel_x > 0: 
+            player.rect.right = subboss.sprite.rect.left
+            player.hitbox.right = player.rect.right
+        elif player.vel_x < 0: 
+            player.rect.left = subboss.sprite.rect.right
+            player.hitbox.left = player.rect.left

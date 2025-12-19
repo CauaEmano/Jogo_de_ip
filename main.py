@@ -21,6 +21,7 @@ fonte_menu = pygame.font.Font("assets/Fontes/WatercolorDemo.ttf", 50)
 fonte_vitoria = pygame.font.Font("assets/Fontes/WatercolorDemo.ttf", 30)
 fonte_game_over = pygame.font.Font("assets/Fontes/WatercolorDemo.ttf", 30)
 fonte_retry = pygame.font.Font("assets/Fontes/WatercolorDemo.ttf", 20)
+fonte_tempo = pygame.font.Font(None, 60)
 
 # Objeto do player
 player = pygame.sprite.GroupSingle()
@@ -128,7 +129,7 @@ while True:
         screen.blit(background.image, (0,0)) 
         screen.blit(chao.image, (0,580))
         texto_v = fonte_vitoria.render("VOCÊ VENCEU!", True, "Gold")
-        texto_t = fonte_vitoria.render(f"Tempo: {tempo_final}", True, "White")
+        texto_t = fonte_tempo.render(f"Tempo: {tempo_final}", True, "White")
         texto_r = fonte_retry.render("Pressione R para jogar novamente", True, "Yellow")
         
         screen.blit(texto_v, texto_v.get_rect(center=(640, 250)))

@@ -131,7 +131,8 @@ while True:
         tiros_inimigos.update()
         for inimigo in inimigos:
             inimigo.update(objetos_solidos, player_rect)
-        subboss.update(objetos_solidos, player_rect)
+        subboss.update(objetos_solidos, p)
+        
 
         # --- DESENHO DO MUNDO ---
         screen.blit(background.image, camera.aplicar_rect(background))
@@ -158,6 +159,7 @@ while True:
         for bala in tiros_inimigos:
             screen.blit(bala.image, camera.aplicar_rect(bala))
 
+        pygame.draw.rect(screen, "Red", subboss.sprite.hitbox, 5)
 
         # Interface e Game Over
         if p:

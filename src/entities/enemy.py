@@ -251,7 +251,7 @@ class SubBoss(Inimigo):
         self.direction = -1
         self.is_flying = False
         self.atacando = False
-        self.hitbox = self.image.get_rect().scale_by(.6, .8)
+        self.hitbox = self.image.get_rect().scale_by(.6, 1)
         self.hitbox.centery = self.rect.centery
 
         self.sprites_ataque = []
@@ -260,15 +260,14 @@ class SubBoss(Inimigo):
             imagem_a_salvar = pygame.transform.scale_by(imagem_a_salvar, .55)
             self.sprites_ataque.append(imagem_a_salvar)
 
-    def update(self, objetos_solidos, player_rect):
+    def update(self, objetos_solidos, player):
         global ataque_timer, ataque_cooldown
 
         self.hitbox.x = self.rect.x
-        
+        self.hitbox.centery = self.rect.centery
 
-        if objetos_solidos is not None and not self.is_flying:
-            if not self.atacando: self.apply_gravity()
-            self.handle_collisions(objetos_solidos)
+        if not self.atacando: self.apply_gravity()
+        self.handle_collisions(objetos_solidos, player)
         
         # Animação de corrida
         self.atual += 0.25
@@ -278,7 +277,7 @@ class SubBoss(Inimigo):
 
         # Perseguição
         AGGRO_RANGE = 600
-        distance = player_rect.centerx - self.rect.centerx
+        distance = player.rect.centerx - self.rect.centerx
         ataque_cooldown -= 1 if ataque_cooldown > 0 and not self.atacando else 0
 
         if not self.atacando and ataque_cooldown <= 8:
@@ -306,19 +305,43 @@ class SubBoss(Inimigo):
             ataque_timer += 1
             self.image = self.sprites_ataque[int(self.atual)]
         
-        alcancavel = -80 < distance and distance < 80 and (self.rect.centery - player_rect.centery < 50 and self.rect.centery - player_rect.centery > -50)
-        if alcancavel and not self.atacando and self.no_chao and ataque_cooldown == 0:
+        alcancavel = -80 < distance and distance < 80 and self.rect.centery - player.rect.centery < 60 and self.rect.centery - player.rect.centery > -60
+        if alcancavel and not self.atacando and ataque_cooldown == 0:
             self.atual = 0
             self.atacando = True
 
-        if self.atacando: # Deslocamento durante ataque
-            if ataque_timer >= 15:
-                ataque_cooldown = 100
-                # self.rect.x += 17.5 * self.direction
-                # self.rect.y -= 2
-                # if ataque_timer > 35:
-                #     self.rect.y += 5.2
-        elif ataque_cooldown <= 8: # Deslocamento padrão
+        if not self.atacando: # Deslocamento padrão
             self.rect.x += self.velocidade * self.direction
 
         self.image = pygame.transform.flip(self.image, True, False) if self.direction == 1 else self.image
+
+    def handle_collisions(self, objetos_solidos, player):
+        self.no_chao = False
+        
+        colisoes = [objeto for objeto in objetos_solidos if self.hitbox.colliderect(objeto.hitbox)]
+        colidiu_player = self.hitbox.colliderect(player.hitbox)
+
+        if colisoes:
+            print(colisoes)
+            for objeto in colisoes:
+                if objeto.rect.left < 0:
+                    if self.direction > 0: 
+                        self.rect.right = objeto.hitbox.left + 5
+                        self.hitbox.right = self.rect.right
+                    elif self.direction < 0: 
+                        self.rect.left = objeto.hitbox.right - 5
+                        self.hitbox.left = self.rect.left
+                
+                if objeto.rect.top >= 600:
+                    self.rect.bottom = objeto.rect.top
+                    self.hitbox.bottom = self.rect.bottom
+                    self.no_chao = True
+                    self.vel_y = 0
+
+        if colidiu_player:
+            if self.direction > 0: 
+                self.rect.right = player.hitbox.left - 2
+                self.hitbox.right = self.rect.right
+            elif self.direction < 0: 
+                self.rect.left = player.hitbox.right + 2
+                self.hitbox.left = self.rect.left

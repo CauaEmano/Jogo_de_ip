@@ -159,7 +159,7 @@ while True:
         for bala in tiros_inimigos:
             screen.blit(bala.image, camera.aplicar_rect(bala))
 
-        pygame.draw.rect(screen, "Red", subboss.sprite.hitbox, 5)
+        # DEBUG: pygame.draw.rect(screen, "Red", subboss.sprite.hitbox, 5)
 
         # Interface e Game Over
         if p:

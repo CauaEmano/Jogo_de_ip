@@ -1,4 +1,4 @@
-# Helicônia
+# Ecos de Aranãmi
 
 > **Status do Projeto:** Em desenvolvimento
 
@@ -40,6 +40,32 @@ O jogo retrata a história de **Helicônia**, uma guerreira indígena abençoada
     </td>
   </tr>
 </table>
+
+## 🛠️ Como rodar o jogo
+
+Para jogar, você precisará ter o [Python 3](https://www.python.org/downloads/) instalado em sua máquina.
+
+### Passo a passo:
+
+1. **Clone o repositório** (ou baixe os arquivos):
+   ```bash
+   git clone [https://github.com/SEU-USUARIO/NOME-DO-REPOSITORIO.git](https://github.com/SEU-USUARIO/NOME-DO-REPOSITORIO.git)
+   cd NOME-DO-REPOSITORIO
+  
+2. **Crie um ambiente virtual** (recomendado):
+# No Windows
+python -m venv venv
+.\venv\Scripts\activate
+
+# No Linux/Mac
+python3 -m venv venv
+source venv/bin/activate
+
+3. **Instale as dependências**:
+pip install -r requirements.txt
+
+4. **Execute o main**:
+python main.py
 
 ---
 
@@ -85,6 +111,8 @@ graph TD
     style Player fill:#bfb,stroke:#333,stroke-width:2px,color:black
     style Enemy fill:#fbb,stroke:#333,stroke-width:2px,color:black
 ```
+
+---
 
 ## 📂 Estrutura de Diretórios
 
@@ -158,3 +186,20 @@ Abaixo, detalhamos como os conceitos estudados na disciplina foram materializado
 | **Estruturas de Dados (Listas/Grupos/Dicionários)** | Uso de Listas (ou Groups do Pygame) para gerenciar múltiplos inimigos, projéteis e plataformas simultaneamente. | `pygame.sprite.Group()`<br>`self.all_sprites` |
 | **Modularização** | Divisão do código em múltiplos arquivos e pastas para facilitar a manutenção e separar responsabilidades. | Pastas `src/core`, `src/world`, `src/entities` |
 | **Condicionais e Lógica Booleana** | Verificação de colisões (Se player toca no inimigo -> perde vida) e inputs de teclado. | `if event.type == QUIT:`<br>`if collision:` |
+
+## 📝 Desafios e Lições Aprendidas
+
+Durante o desenvolvimento deste projeto, enfrentamos obstáculos técnicos e de gestão que serviram como grandes fontes de aprendizado.
+
+### 1. O Maior Erro: Escopo e Tempo
+**O Problema:** O nosso maior erro foi o dimensionamento do projeto versus o tempo disponível. Idealizamos um jogo muito complexo (escopo grande) sem considerar adequadamente as outras demandas acadêmicas e o prazo curto, o que resultou em uma demora para iniciar a execução prática.
+**A Solução:** Para lidar com isso, tivemos que adaptar o projeto na reta final, focando no que era essencial para a entrega e aceitando que nem todas as funcionalidades planejadas (como a construção complexa do antagonista) poderiam ser implementadas a tempo.
+
+### 2. O Maior Desafio Técnico: Colisões e Invencibilidade
+**O Problema:** A parte mais difícil do código foi refinar o sistema de colisão, especificamente a lógica de *i-frames* (frames de invencibilidade). Havia bugs onde a personagem não ficava invulnerável após sofrer dano ou a colisão não era registrada corretamente.
+**A Solução:** Lidamos com isso através de muita depuração (debugging) e testes, ajustando o tempo e as condições das "hitboxes" até que a mecânica funcionasse de forma justa para o jogador.
+
+### 3. Lições Aprendidas
+A principal lição que levamos é sobre a dinâmica de trabalho em grupo. Aprendemos que:
+* **Organização é chave:** Trabalhar em equipe é excelente, mas exige uma divisão de tarefas clara desde o início.
+* **Comunicação:** A comunicação constante é mais importante do que a habilidade técnica individual, para garantir que todos estejam seguindo na mesma direção e integrando o código corretamente.

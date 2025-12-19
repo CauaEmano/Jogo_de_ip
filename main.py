@@ -1,6 +1,7 @@
 import pygame
 from sys import exit
 from src import *
+import random
 
 # Variáveis e funções essenciais
 pygame.init()
@@ -86,8 +87,17 @@ pygame.mixer.music.load('assets/audios/floresta.wav')
 pygame.mixer.music.play(-1)
 pygame.mixer.music.set_volume(0.1)
 
+shake_timer = 0
+
 # Loop principal
 while True:
+    shake_x = 0
+    shake_y = 0
+    if shake_timer > 0:
+        shake_timer -= 1
+        shake_x = random.randint(-8, 8) 
+        shake_y = random.randint(-8, 8) 
+
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
@@ -105,6 +115,7 @@ while True:
             
             if not player.sprite and event.key == pygame.K_r:
                 player, bullet_group, tiros_inimigos, inimigos, coletaveis, subboss = carregar_nivel(player, bullet_group, tiros_inimigos, inimigos, coletaveis,subboss)
+                shake_timer = 0
     
     # tela inicial
     if not em_jogo:
@@ -150,6 +161,14 @@ while True:
                         
             if subboss.sprite:
                 colisao_subboss(p, subboss.sprite)
+                if subboss.sprite.vida <= 5:
+                    if not subboss.sprite.ja_gritou:
+                        subboss.sprite.ja_gritou = True
+                        if subboss.sprite.som_grito:
+                            subboss.sprite.som_grito.play()
+                        shake_timer = 90
+                    for plat in plataformas:
+                        plat.caindo = True
 
             player_rect = p.rect
         else:
@@ -161,9 +180,16 @@ while True:
         tiros_inimigos.update()
         for inimigo in inimigos:
             inimigo.update(objetos_solidos, player_rect)
+        objetos_solidos.update()
 
         # --- DESENHO DO MUNDO ---
-        screen.blit(background.image, camera.aplicar_rect(background))
+
+        def aplicar_shake(rect):
+            rect.x += shake_x
+            rect.y += shake_y
+            return rect
+
+        screen.blit(background.image, aplicar_shake(camera.aplicar_rect(background)))
         for sprite in objetos_solidos:
             if sprite == chao:
                 chao_rect = camera.aplicar_rect(sprite)

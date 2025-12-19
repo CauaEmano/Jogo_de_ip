@@ -251,15 +251,20 @@ class Capivara(Inimigo):
 class SubBoss(Inimigo):
     def __init__(self, pos_x, pos_y):
         global ataque_timer, ataque_cooldown
-        super().__init__(pos_x, pos_y, "assets/images/Inimigos/Subboss/subboss", 36, 120, 150, 10) 
+        super().__init__(pos_x, pos_y, "assets/images/Inimigos/Subboss/subboss", 36, 120, 150, 12) 
         
         self.atual = 0
         self.velocidade = 4
         self.direction = -1
         self.is_flying = False
         self.atacando = False
+        self.ja_gritou = False
         self.hitbox = self.image.get_rect().scale_by(.6, 1)
         self.hitbox.centery = self.rect.centery
+        self.som_ataque = pygame.mixer.Sound('assets/audios/subboss_ataque.flac')
+        self.som_ataque.set_volume(0.5)
+        self.som_grito = pygame.mixer.Sound('assets/audios/subboss_grito.flac')
+        self.som_grito.set_volume(0.8)
 
         self.sprites_ataque = []
         for i in range(36):
@@ -316,6 +321,7 @@ class SubBoss(Inimigo):
         if alcancavel and not self.atacando and ataque_cooldown == 0:
             self.atual = 0
             self.atacando = True
+            if self.som_ataque: self.som_ataque.play()
 
         if not self.atacando: # Deslocamento padrão
             self.rect.x += self.velocidade * self.direction

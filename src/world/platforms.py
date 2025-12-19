@@ -48,11 +48,17 @@ class Plataforma(pygame.sprite.Sprite):
         self.image = pygame.transform.scale(img_limpa, (largura, altura))
 
         self.rect = self.image.get_rect(topleft=(x, y))
+        self.caindo = False
 
         ajuste_vão = 10 
         self.hitbox = self.rect.copy()
         self.hitbox.top += ajuste_vão
         self.hitbox.height -= ajuste_vão
+    def update(self):
+        if self.caindo:
+            self.rect.y += 10 
+            if self.rect.y > 2000:
+                self.kill()
 
 class Parede (pygame.sprite.Sprite):
     def __init__(self, x, y, largura, altura):

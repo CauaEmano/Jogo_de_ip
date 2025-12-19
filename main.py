@@ -25,14 +25,38 @@ objetos_solidos = pygame.sprite.Group()
 objetos_solidos_pedra = pygame.sprite.Group()
 chao = Chao()
 parede = Parede(x=-50, y=-100, largura=50, altura=700)
-plataformas = [Plataforma(x=200, y=480, largura=120, altura=30),
-Plataforma(x=450, y=400, largura=150, altura=30),
+plataformas = [
 Plataforma(x=1200, y=480, largura=120, altura=30),
 Plataforma(x=1450, y=400, largura=150, altura=30),
 Plataforma(x=2200, y=480, largura=120, altura=30),
 Plataforma(x=2450, y=400, largura=150, altura=30),
 Plataforma(x=3200, y=480, largura=120, altura=30),
-Plataforma(x=3450, y=400, largura=150, altura=30)]
+Plataforma(x=3450, y=400, largura=150, altura=30),
+Plataforma(x=4200, y=480, largura=120, altura=30),
+Plataforma(x=4450, y=400, largura=150, altura=30),
+Plataforma(x=5200, y=480, largura=120, altura=30),
+Plataforma(x=5450, y=400, largura=150, altura=30),
+Plataforma(x=6200, y=480, largura=120, altura=30),
+Plataforma(x=6450, y=400, largura=150, altura=30),
+Plataforma(x=7200, y=480, largura=120, altura=30),
+Plataforma(x=8200, y=480, largura=120, altura=30),
+Plataforma(x=8450, y=400, largura=150, altura=30),
+Plataforma(x=8700, y=400, largura=120, altura=30),
+Plataforma(x=9200, y=480, largura=150, altura=30),
+Plataforma(x=10200, y=480, largura=120, altura=30),
+Plataforma(x=10450, y=400, largura=150, altura=30),
+Plataforma(x=10700, y=400, largura=120, altura=30),
+Plataforma(x=10950, y=400, largura=150, altura=30),
+Plataforma(x=12200, y=480, largura=120, altura=30),
+Plataforma(x=12450, y=400, largura=150, altura=30),
+Plataforma(x=12700, y=480, largura=120, altura=30),
+Plataforma(x=13200, y=480, largura=120, altura=30),
+Plataforma(x=13450, y=400, largura=150, altura=30),
+Plataforma(x=13900, y=480, largura=120, altura=30),
+Plataforma(x=14150, y=400, largura=150, altura=30),
+Plataforma(x=14350, y=320, largura=150, altura=30),
+Plataforma(x=14600, y=400, largura=120, altura=30),
+Plataforma(x=14800, y=480, largura=120, altura=30),]
 objetos_solidos.add(chao, parede, plataformas)
 objetos_solidos_pedra.add(chao, parede)
 

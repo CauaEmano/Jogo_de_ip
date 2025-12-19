@@ -49,8 +49,8 @@ Para jogar, você precisará ter o [Python 3](https://www.python.org/downloads/)
 
 1. **Clone o repositório** (ou baixe os arquivos):
    ```bash
-   git clone [https://github.com/SEU-USUARIO/NOME-DO-REPOSITORIO.git](https://github.com/SEU-USUARIO/NOME-DO-REPOSITORIO.git)
-   cd NOME-DO-REPOSITORIO
+   git clone https://github.com/CauaEmano/Jogo_de_ip
+   cd Jogo_de_ip
   
 2. **Crie um ambiente virtual** (recomendado):
 # No Windows

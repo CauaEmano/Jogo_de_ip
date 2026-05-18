@@ -10,22 +10,22 @@ class Projetil;
 
 class Jogador{
     private:
-        int vida;
+        int vida; 
         int max_vida;
 
         float pos_x, pos_y; 
-        float vel_x, vel_y; 
-        int direcao;
+        float vel_x, vel_y;  
+        int direcao; 
 
         int invencib_timer;
-        int tiro_cooldown;
-        bool no_ar;
-        bool pulo_duplo;
+        int tiro_cooldown; 
+        bool no_ar; 
+        bool pulo_duplo; 
 
-        std::map<std::string, int> inventario; // chave: nome do item (string), valor: quantidade (int).
+        std::map<std::string, int> inventario; 
 
     public:
-        Jogador(int max_vida, float pos_x, float pos_y, float vel_x, float vel_y);
+        Jogador(int max_vida, float pos_x, float pos_y, float vel_x, float vel_y); 
         void mover(int direcao);
         void pular();
 
@@ -34,7 +34,7 @@ class Jogador{
         bool isVivo() const;
         void adicionarItem(std::string item, int quantidade);
         int getItem(std::string item) const;
-        void atualizar();
+        void update();
 
         int getDirecao() const;
         float getPosX() const;

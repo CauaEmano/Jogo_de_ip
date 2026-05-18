@@ -6,7 +6,7 @@ class Projetil{
         float pos_x, pos_y;
         float vel_x, vel_y;
         int dano;
-        bool ativo; // se o projétil já colidiu com algo ou ainda está ativo.
+        bool ativo; // falso se o projétil já colidiu com algo.
     public:
         Projetil(float pos_x, float pos_y, float vel_x, float vel_y, int dano);
         virtual ~Projetil();
@@ -17,7 +17,7 @@ class Projetil{
         float getPosY() const;
 
         bool isAtivo() const;
-        void desativar();
+        virtual void desativar();
 };
 
 #endif

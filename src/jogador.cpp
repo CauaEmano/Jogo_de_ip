@@ -31,7 +31,7 @@ void Jogador::pular(){
     }
     else{
         no_ar = true;
-        pulo_duplo = true;
+        pulo_duplo = false;
         pos_y += vel_y;
     }
 }

@@ -13,7 +13,7 @@ Jogador::Jogador(int max_vida, float pos_x, float pos_y, float vel_x, float vel_
     invencib_timer = 0;
     tiro_cooldown = 0;
     no_ar = false;
-    pulo_duplo = true;
+    pulo_duplo = false;
     inventario.insert({"Pedra", 8});
 }
 

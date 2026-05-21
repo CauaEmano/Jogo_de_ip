@@ -9,7 +9,8 @@ class Tiro : public Projetil{
         ~Tiro();
 
         void update() override;
-        void ricochetear(); // verificar se o tiro bateu na parede e ricochetear
+        void ricochetear(float parede_esquerda, float parede_direita); // verificar se o tiro bateu na parede e ricochetear
+        void desativar() override;
 };
 
 #endif
